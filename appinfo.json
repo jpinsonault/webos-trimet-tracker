@@ -1,0 +1,9 @@
+{
+	"id": "com.noone.trimettracker",
+	"version": "1.0.0",
+	"vendor": "No One",
+	"type": "web",
+	"main": "index.html",
+	"title": "Trimet Tracker",
+	"icon": "icon.png"
+}

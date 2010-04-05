@@ -1,0 +1,42 @@
+.stop_item {
+	margin-left:15px;
+	padding-top:10px;
+	padding-bottom:5px;
+	font-size:90%;
+}
+
+.bus_item {
+	margin-left:15px;
+	padding-top:10px;
+	font-size:85%;
+}
+
+.stop_id {
+	color:green;
+	float:right;
+	margin-right:10px;
+}
+
+.stop_description {
+	
+}
+
+.arrival_time {
+	float:right;
+	color:green;
+	margin-right:10px;
+}
+
+.minute_tag {
+	font-size:85%;
+}
+
+#has_scheduled_arrival {
+	margin-left:15px;
+	margin-right:20px;
+	text-align:center;
+}
+
+#stop_header {
+	font-size:90%
+}
