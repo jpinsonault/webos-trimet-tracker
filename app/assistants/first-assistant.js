@@ -20,9 +20,15 @@ function FirstAssistant() {
 FirstAssistant.prototype.setup = function() {
 	/* this function is for setup tasks that have to happen when the scene is first created */
         
-	 // Add Stop Button
+		
+	// Refresh button
 	////////////////////////////////
-	this.controller.setupWidget('addStopButton', {}, {buttonLabel: 'Add Stop'});
+	this.cmdMenuModel = {
+   		items: [
+      		{label:'Add Stop', command:'addStop', icon: 'new'}
+   		]};
+
+	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
 	
 	 // Stop List
 	////////////////////////////////
@@ -47,11 +53,19 @@ FirstAssistant.prototype.setup = function() {
 	
 	 // Setup Listeners
 	////////////////////////////////
-	Mojo.Event.listen($('addStopButton'),Mojo.Event.tap, this.handleAddStopButtonPress.bind(this));
 	Mojo.Event.listen($('stop_list'), Mojo.Event.listTap, this.listClickHandler.bind(this));
 	Mojo.Event.listen($('stop_list'), Mojo.Event.listDelete, this.listDeleteHandler.bind(this));
 	Mojo.Event.listen($('stop_list'), Mojo.Event.listReorder, this.listReorderHandler.bind(this));
 };
+
+FirstAssistant.prototype.handleCommand = function (event) {
+	if (event.type == Mojo.Event.command) {
+		if (event.command == "addStop") {
+			this.controller.stageController.pushScene('addstop');
+			return;
+		}
+	}
+}
 
 FirstAssistant.prototype.listDeleteHandler = function(event){
 	// Remove the item and re-save the depot
@@ -147,7 +161,6 @@ FirstAssistant.prototype.deactivate = function(event) {
 FirstAssistant.prototype.cleanup = function(event) {
 	/* this function should do any cleanup needed before the scene is destroyed as 
 	   a result of being popped off the scene stack */
-	Mojo.Event.stopListening($('addStopButton'),Mojo.Event.tap, this.handleAddStopButtonPressBinder);
 	Mojo.Event.stopListening($('stop_list'), Mojo.Event.listTap, this.listClickHandler);
 	Mojo.Event.stopListening($('stop_list'), Mojo.Event.listDelete, this.listDeleteHandler.bind(this));
 	Mojo.Event.stopListening($('stop_list'), Mojo.Event.listReorder, this.listReorderHandler.bind(this));

@@ -31,12 +31,20 @@
 	font-size:85%;
 }
 
+.busStopSpinner {
+	
+}
+
 #has_scheduled_arrival {
 	margin-left:15px;
 	margin-right:20px;
 	text-align:center;
 }
 
+#main-hdr {
+	overflow:hidden;
+}
+
 #stop_header {
-	font-size:90%
+	font-size:100%;
 }

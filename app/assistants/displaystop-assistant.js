@@ -41,7 +41,7 @@ DisplaystopAssistant.prototype.setup = function() {
 	////////////////////////////////
 	this.cmdMenuModel = {
    		items: [
-      		{label:'Refresh', command:'refreshStops'}
+      		{label:'Refresh', command:'refreshStops', icon: 'refresh'}
    		]};
 
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
