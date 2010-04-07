@@ -1,7 +1,7 @@
 {
-	"id": "com.noone.trimettracker",
+	"id": "com.beaglesoftware.trimettracker",
 	"version": "1.0.0",
-	"vendor": "No One",
+	"vendor": "Beagle Software",
 	"type": "web",
 	"main": "index.html",
 	"title": "Trimet Tracker",
