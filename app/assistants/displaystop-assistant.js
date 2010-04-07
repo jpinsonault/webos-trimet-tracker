@@ -78,6 +78,19 @@ DisplaystopAssistant.prototype.setup = function() {
 	/* add event handlers to listen to events from widgets */
 };
 
+DisplaystopAssistant.prototype.updateBusList = function(isScheduled){
+	this.controller.modelChanged(this.listModel);
+	
+	// Display notice for scheduled stops
+	if(isScheduled == true){
+		Mojo.Log.info("........","Has scheduled arrival");
+		$("has_scheduled_arrival").show();
+	}
+	else{
+		$("has_scheduled_arrival").hide();
+	}
+}
+
 DisplaystopAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.command) {
 		if (event.command == "refreshStops") {
@@ -166,18 +179,10 @@ DisplaystopAssistant.prototype.fillBusList = function(){
 		this.busList.push.apply(this.busList, [{route: route, arrival_time: arrivalTime, style: style}]);
 	}
 	//update list on screen
-	this.controller.modelChanged(this.listModel);
+	this.updateBusList(isScheduled);
 	
 	this.stopSpinner();
 	
-	// Display notice for scheduled stops
-	if(isScheduled == true){
-		Mojo.Log.info("........","Has scheduled arrival");
-		$("has_scheduled_arrival").show();
-	}
-	else{
-		$("has_scheduled_arrival").hide();
-	}
 };
 
 DisplaystopAssistant.prototype.getArrivalTime = function(xmlArrival){
@@ -232,16 +237,10 @@ DisplaystopAssistant.prototype.failure = function(transport) {
 	});
 }
 
-DisplaystopAssistant.prototype.getBuses = function() {
-	// TODO make this work
-	this.busList.push.apply(this.busList, [{route: this.stopID, arrival_time: "32"}]);
-	this.controller.modelChanged(this.listModel);
-};
 
 DisplaystopAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
-	//this.getBuses();
 };
 
 DisplaystopAssistant.prototype.deactivate = function(event) {

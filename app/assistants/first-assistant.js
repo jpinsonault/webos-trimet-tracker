@@ -59,6 +59,22 @@ FirstAssistant.prototype.setup = function() {
 	Mojo.Event.listen($('stop_list'), Mojo.Event.listReorder, this.listReorderHandler.bind(this));
 };
 
+FirstAssistant.prototype.updateStopList = function(){
+	Mojo.Log.info("*************Updating List");
+	
+	this.controller.modelChanged(this.listModel);
+	
+	
+	// show or hide the empty list message
+	if (this.listModel.items.length == 0){
+		this.showEmptyListMessage();
+	}
+	else{
+		this.hideEmptyListMessage();
+	}
+
+}
+
 FirstAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.command) {
 		if (event.command == "addStop") {
@@ -71,7 +87,7 @@ FirstAssistant.prototype.handleCommand = function (event) {
 FirstAssistant.prototype.listDeleteHandler = function(event){
 	// Remove the item and re-save the depot
 	this.stopList.splice(event.index,1);
-	this.stopListDepot.add("stops", this.stopList, this.depotAddSuccess.bind(this), this.depotAddFailure.bind(this))
+	this.stopListDepot.add("stops", this.stopList, this.depotAddSuccess.bind(this), this.depotAddFailure.bind(this));
 }
 
 FirstAssistant.prototype.listReorderHandler = function(event){
@@ -88,20 +104,24 @@ FirstAssistant.prototype.askForStopList = function(){
 
 FirstAssistant.prototype.fillStopList = function(stops){
 	// Fills the stopList with the items from the depot
-	if (stops != null) {
-		for (var index = 0; index < stops.length; ++index) {
-			this.stopList.push.apply(this.stopList, [{
-				stop_id: stops[index].stop_id,
-				description: stops[index].description,
-				direction: stops[index].direction
-			}]);
-		}
-		this.controller.modelChanged(this.listModel);
+
+	for (var index = 0; index < stops.length; ++index) {
+		this.stopList.push.apply(this.stopList, [{
+			stop_id: stops[index].stop_id,
+			description: stops[index].description,
+			direction: stops[index].direction
+		}]);
 	}
-	else {
-		Mojo.Log.info("........", "List is empty")
-	}
+	this.updateStopList();
 };
+
+FirstAssistant.prototype.showEmptyListMessage = function(){
+	$("empty-list-message").show();
+}
+
+FirstAssistant.prototype.hideEmptyListMessage = function(){
+	$("empty-list-message").hide();
+}
 
 FirstAssistant.prototype.depotGetFailure = function(transaction, result){
 	 Mojo.Log.info("........","Failed to get data from depot: ", result.message); 
@@ -150,7 +170,7 @@ FirstAssistant.prototype.activate = function(event) {
 			description:event.description, 
 			direction:event.direction
 		}]);
-		this.controller.modelChanged(this.listModel);
+		this.updateStopList();
 		// Save the depot
 		this.stopListDepot.add("stops", this.stopList, this.depotAddSuccess.bind(this), this.depotAddFailure.bind(this));
 	}
@@ -158,6 +178,7 @@ FirstAssistant.prototype.activate = function(event) {
 
 FirstAssistant.prototype.depotAddSuccess = function(event) {
 	Mojo.Log.info("........","Depot Add Success.");
+	this.updateStopList();
 };
 
 FirstAssistant.prototype.depotAddFailure = function(transaction, result) {
