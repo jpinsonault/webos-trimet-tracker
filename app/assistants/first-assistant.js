@@ -21,8 +21,9 @@ FirstAssistant.prototype.setup = function() {
 	/* this function is for setup tasks that have to happen when the scene is first created */
         
 		
-	// Refresh button
+	// Add Stop button
 	////////////////////////////////
+
 	this.cmdMenuModel = {
    		items: [
       		{label:'Add Stop', command:'addStop', icon: 'new'}
@@ -91,7 +92,8 @@ FirstAssistant.prototype.fillStopList = function(stops){
 		for (var index = 0; index < stops.length; ++index) {
 			this.stopList.push.apply(this.stopList, [{
 				stop_id: stops[index].stop_id,
-				description: stops[index].description
+				description: stops[index].description,
+				direction: stops[index].direction
 			}]);
 		}
 		this.controller.modelChanged(this.listModel);
@@ -124,7 +126,8 @@ FirstAssistant.prototype.listClickHandler = function(event){
 	// Setup the data for the Display Stop Scene and push the scene
 	var stopData = {
 		stop_id: event.item.stop_id, 
-		description: event.item.description
+		description: event.item.description,
+		direction: event.item.direction
 	};
 	Mojo.Log.info("........", "before pushscene"); 
 	
@@ -135,9 +138,18 @@ FirstAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
 	  
+	if (this.stopList.length == 0){
+		// show the empty-list message
+	}
+	
 	if (event != undefined) {
 		// Push the stop data from the Add Stop scene onto the stopList
-		this.stopList.push.apply(this.stopList, [{stop_id:event.stop_id, description:event.description}]);
+		this.stopList.push.apply(this.stopList, 
+		[{
+			stop_id:event.stop_id, 
+			description:event.description, 
+			direction:event.direction
+		}]);
 		this.controller.modelChanged(this.listModel);
 		// Save the depot
 		this.stopListDepot.add("stops", this.stopList, this.depotAddSuccess.bind(this), this.depotAddFailure.bind(this));

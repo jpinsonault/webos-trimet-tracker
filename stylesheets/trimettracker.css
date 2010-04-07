@@ -31,8 +31,16 @@
 	font-size:85%;
 }
 
-.busStopSpinner {
+#busStopSpinner {
+	margin-right:0px;
+}
+
+.stop_direction {
+	margin-left:15px;
+	margin-right:10px;
+	font-size:75%;
 	
+	color:black;
 }
 
 #has_scheduled_arrival {
@@ -43,7 +51,9 @@
 
 #main-hdr {
 	overflow:hidden;
+	text-align:left;
 }
+
 
 #stop_header {
 	font-size:100%;

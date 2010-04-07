@@ -8,6 +8,7 @@ function DisplaystopAssistant(stopData) {
 	////////////////////////////////
 	this.stopID = stopData.stop_id;
 	this.description = stopData.description;
+	this.direction = stopData.direction;
 	this.xmlData;
 	this.baseUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=4830CC8DCF9D9BE9EB56D3256&locIDs=';
 }
@@ -26,7 +27,10 @@ DisplaystopAssistant.prototype.setup = function() {
 	
 	this.busList = [];
 	
-	this.listModel = {items:this.busList};
+	this.listModel = {
+		items:this.busList,
+		listTitle: this.direction
+	};
 	
     this.ListAttrs = {
 		renderLimit:20,
@@ -36,13 +40,22 @@ DisplaystopAssistant.prototype.setup = function() {
     };
 	
 	this.controller.setupWidget('bus_list', this.ListAttrs, this.listModel);
+	Mojo.Log.info("********** About to update")
 	
 	// Refresh button
 	////////////////////////////////
-	this.cmdMenuModel = {
-   		items: [
-      		{label:'Refresh', command:'refreshStops', icon: 'refresh'}
-   		]};
+	
+	this.reloadModel = {
+    	label: $L("Refresh"),
+    	icon: "refresh",
+	    command: "refreshStops"
+    };
+                        
+
+    this.cmdMenuModel = {
+        visible: true,
+        items: [this.reloadModel, {}]
+    };
 
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
 
@@ -102,7 +115,7 @@ DisplaystopAssistant.prototype.startSpinner = function(){
 	this.controller.modelChanged(this.spinnerModel);
 }
 
-DisplaystopAssistant.prototype.stopSpinner = function(){
+DisplaystopAssistant.prototype.stopSpinner = function(){	
 	this.spinnerModel.spinning = false;
 	this.controller.modelChanged(this.spinnerModel);
 }

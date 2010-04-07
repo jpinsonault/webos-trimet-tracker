@@ -175,7 +175,8 @@ AddstopAssistant.prototype.handleLookupOnce = function()
 AddstopAssistant.prototype.doLookupOnce = function(){
 	var stopData = {
 		stop_id: this.textFieldModel.value, 
-		description: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc")
+		description: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc"),
+		direction: this.xmlData.getElementsByTagName("location")[0].getAttribute("dir")
 	};
 	this.controller.stageController.pushScene('displaystop', stopData);
 }
@@ -185,7 +186,8 @@ AddstopAssistant.prototype.handlePop = function()
 	//pop the current scene off the scene stack
 	var stopData = {
 		stop_id: this.textFieldModel.value, 
-		description: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc")
+		description: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc"),
+		direction: this.xmlData.getElementsByTagName("location")[0].getAttribute("dir")
 	};
 	
 	this.controller.stageController.popScene(stopData);
