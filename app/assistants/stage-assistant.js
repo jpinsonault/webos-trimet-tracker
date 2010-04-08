@@ -1,5 +1,12 @@
 function StageAssistant() {
 	/* this is the creator function for your stage assistant object */
+	appMenuAttr = {omitDefaultItems: true};
+	appMenuModel = {
+		items: [
+			Mojo.Menu.editItem,
+			{label: "Help", command: 'do-help'}
+		]
+	};
 }
 
 StageAssistant.prototype.setup = function() {
@@ -7,5 +14,18 @@ StageAssistant.prototype.setup = function() {
 	
 	/* for a simple application, the stage assistant's only task is to push the scene, making it
 	   visible */
+	  
+	
 	this.controller.pushScene("first");
 };
+
+StageAssistant.prototype.handleCommand = function (event) {
+	this.controller=Mojo.Controller.stageController.activeScene();
+	if (event.type == Mojo.Event.command) {
+		switch (event.command) {
+			case 'do-help':
+			this.controller.stageController.pushScene('help');
+			break;
+		}
+	}
+}

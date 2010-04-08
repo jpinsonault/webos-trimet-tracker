@@ -10,6 +10,10 @@ function AddstopAssistant() {
 
 AddstopAssistant.prototype.setup = function() {
 	
+	// Menu
+	////////////////////////////////
+	this.controller.setupWidget(Mojo.Menu.appMenu, appMenuAttr, appMenuModel);
+	
 	// Add Stop Button
 	////////////////////////////////
 	this.submitButtonModel = {
@@ -31,7 +35,7 @@ AddstopAssistant.prototype.setup = function() {
 	this.controller.setupWidget('lookupOnceButton', {type: Mojo.Widget.activityButton}, this.lookupOnceButtonModel);
 	
 	
-	// Add Stop Button
+	// Text Field
 	////////////////////////////////
 	this.textFieldModel = {
        	value : "",
@@ -40,7 +44,8 @@ AddstopAssistant.prototype.setup = function() {
 	
 	this.textFieldAttributes = {
 		modifierState: 	Mojo.Widget.numLock,
-		focusMode:		Mojo.Widget.focusSelectMode
+		focusMode:		Mojo.Widget.focusSelectMode,
+		hintText: "Enter a stop ID"
 	};
 		
 	this.controller.setupWidget('addStopTextField', this.textFieldAttributes, this.textFieldModel);
@@ -59,6 +64,14 @@ AddstopAssistant.prototype.getStopData = function(stopID, action) {
 		url = this.baseUrl + stopID;
 	}
 	
+	// Check for internet connection
+	this.controller.serviceRequest('palm://com.palm.connectionmanager', {
+     method: 'getstatus',
+     parameters: {},
+     onSuccess: this.ConnectionServiceSuccess.bind(this),
+     onFailure: function(response){}
+ 	});
+	
 	
 	var ajaxOptions = {
 		method: 'get',
@@ -68,6 +81,23 @@ AddstopAssistant.prototype.getStopData = function(stopID, action) {
 	}
 	
 	var request = new Ajax.Request(url, ajaxOptions);
+	
+}
+
+AddstopAssistant.prototype.ConnectionServiceSuccess = function(response){
+	
+	if (response.isInternetConnectionAvailable == false) {
+		this.controller.showAlertDialog({
+			onChoose: function(value){},
+			title: $L("Error"),
+			message: "No internet connection available.",
+			choices: [{
+				label: $L('OK'),
+				value: 'ok',
+				type: 'color'
+			}]
+		});
+	}
 	
 }
 

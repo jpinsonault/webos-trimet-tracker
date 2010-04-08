@@ -20,7 +20,11 @@ function FirstAssistant() {
 FirstAssistant.prototype.setup = function() {
 	/* this function is for setup tasks that have to happen when the scene is first created */
         
-		
+	// Menu
+	////////////////////////////////
+	this.controller.setupWidget(Mojo.Menu.appMenu, appMenuAttr, appMenuModel);
+	
+	 
 	// Add Stop button
 	////////////////////////////////
 
@@ -76,10 +80,11 @@ FirstAssistant.prototype.updateStopList = function(){
 }
 
 FirstAssistant.prototype.handleCommand = function (event) {
-	if (event.type == Mojo.Event.command) {
-		if (event.command == "addStop") {
+	if (event.type == Mojo.Event.command) {	
+		switch (event.command) {
+			case 'addStop':
 			this.controller.stageController.pushScene('addstop');
-			return;
+			break;
 		}
 	}
 }
@@ -105,6 +110,10 @@ FirstAssistant.prototype.askForStopList = function(){
 FirstAssistant.prototype.fillStopList = function(stops){
 	// Fills the stopList with the items from the depot
 
+	if (stops == undefined){
+		Mojo.Log.info("********* Stops undefined")
+		stops = [];
+	}
 	for (var index = 0; index < stops.length; ++index) {
 		this.stopList.push.apply(this.stopList, [{
 			stop_id: stops[index].stop_id,

@@ -58,6 +58,10 @@
 	text-align:left;
 }
 
+#help-body {
+	margin-left:15px;
+	margin-right:15px;
+}
 
 #stop_header {
 	font-size:100%;

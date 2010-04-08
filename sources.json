@@ -11,5 +11,9 @@
     {
         "scenes": "displaystop",
         "source": "app/assistants/displaystop-assistant.js"
+    },
+    {
+        "scenes": "help",
+        "source": "app/assistants/help-assistant.js"
     }
 ]

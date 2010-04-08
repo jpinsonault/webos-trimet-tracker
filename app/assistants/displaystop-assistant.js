@@ -4,6 +4,13 @@ function DisplaystopAssistant(stopData) {
 	   to the scene controller (this.controller) has not be established yet, so any initialization
 	   that needs the scene controller should be done in the setup function below. */
 	  
+	/*this.appMenuModel = {
+		items: [
+			Mojo.Menu.editItem,
+			{label: "Help", command: 'do-help'}
+		]
+	};*/
+	  
 	// 
 	////////////////////////////////
 	this.stopID = stopData.stop_id;
@@ -21,6 +28,10 @@ DisplaystopAssistant.prototype.setup = function() {
 	/* setup widgets here */
 	
 	$("stop_header").update(this.stopID + ": " + this.description);
+	
+	// Menu
+	////////////////////////////////
+	this.controller.setupWidget(Mojo.Menu.appMenu, appMenuAttr, appMenuModel);
 	
 	// Bus List
 	////////////////////////////////
@@ -92,15 +103,17 @@ DisplaystopAssistant.prototype.updateBusList = function(isScheduled){
 }
 
 DisplaystopAssistant.prototype.handleCommand = function (event) {
-	if (event.type == Mojo.Event.command) {
-		if (event.command == "refreshStops") {
-			
+	if (event.type == Mojo.Event.command) {	
+		switch (event.command) {
+			case 'refreshStops':
 			// clear out the bus list
 			this.busList.splice(0,this.busList.length);
 	
 			this.getStopData(this.stopID);
-			return;
+			break;
+				
 		}
+
 	}
 }
 
@@ -112,6 +125,13 @@ DisplaystopAssistant.prototype.getStopData = function() {
 		url = this.baseUrl + this.stopID;
 	}
 	
+	this.controller.serviceRequest('palm://com.palm.connectionmanager', {
+     method: 'getstatus',
+     parameters: {},
+     onSuccess: this.ConnectionServiceSuccess.bind(this),
+     onFailure: function(response){}
+ 	});
+	
 	this.startSpinner();
 	
 	var request = new Ajax.Request(url, {
@@ -120,6 +140,23 @@ DisplaystopAssistant.prototype.getStopData = function() {
 		onComplete: this.gotResults.bind(this),
 		onFailure: this.failure.bind(this)
 	});
+	
+}
+
+DisplaystopAssistant.prototype.ConnectionServiceSuccess = function(response){
+	
+	if (response.isInternetConnectionAvailable == false) {
+		this.controller.showAlertDialog({
+			onChoose: function(value){},
+			title: $L("Error"),
+			message: "No internet connection available.",
+			choices: [{
+				label: $L('OK'),
+				value: 'ok',
+				type: 'color'
+			}]
+		});
+	}
 	
 }
 
@@ -221,6 +258,7 @@ DisplaystopAssistant.prototype.failure = function(transport) {
 	/*
 	 * Use the Prototype template object to generate a string from the return status.
 	 */
+	Mojo.Log.info("******** Ajax get failure")
 	var template = new Template($L("Error: Status #{status} returned from Trimet xml request."));
 	var message = template.evaluate(transport);
 	
