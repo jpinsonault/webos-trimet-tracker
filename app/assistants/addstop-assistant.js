@@ -14,6 +14,28 @@ AddstopAssistant.prototype.setup = function() {
 	////////////////////////////////
 	this.controller.setupWidget(Mojo.Menu.appMenu, appMenuAttr, appMenuModel);
 	
+	// Command Menu Buttons
+	////////////////////////////////
+	
+	/*
+this.addStopModel = {
+    	label: $L("Add Stop"),
+	    command: "addStop"
+    };
+	
+	this.lookupButtonModel = {
+    	label: $L("Look Up Once"),
+	    command: "lookupOnce"
+    };
+	
+	this.cmdMenuModel = {
+        visible: true,
+        items: [this.addStopModel, this.lookupButtonModel]
+    };
+
+	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
+*/
+	
 	// Add Stop Button
 	////////////////////////////////
 	this.submitButtonModel = {
@@ -55,6 +77,21 @@ AddstopAssistant.prototype.setup = function() {
 	this.controller.listen('addStopSubmitButton', Mojo.Event.tap, this.handleAddStop.bind(this));
 	this.controller.listen('lookupOnceButton', Mojo.Event.tap, this.handleLookupOnce.bind(this));
 };
+
+AddstopAssistant.prototype.handleCommand = function (event) {
+	if (event.type == Mojo.Event.command) {	
+		switch (event.command) {
+			case 'addStop':
+			this.handleAddStop();
+			break;
+			
+			case 'lookupOnce':
+			this.handleLookupOnce();
+			break;
+		}
+
+	}
+}
 
 AddstopAssistant.prototype.getStopData = function(stopID, action) {
 	if (Mojo.Host.current === Mojo.Host.mojoHost) {

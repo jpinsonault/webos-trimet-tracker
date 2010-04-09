@@ -15,5 +15,9 @@
     {
         "scenes": "help",
         "source": "app/assistants/help-assistant.js"
+    },
+    {
+        "scenes": "displaybus",
+        "source": "app/assistants/displaybus-assistant.js"
     }
 ]

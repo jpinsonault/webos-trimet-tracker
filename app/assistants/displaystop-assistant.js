@@ -58,7 +58,7 @@ DisplaystopAssistant.prototype.setup = function() {
 	
 	this.reloadModel = {
     	label: $L("Refresh"),
-    	icon: "refresh",
+    	//icon: "refresh",
 	    command: "refreshStops"
     };
                         
