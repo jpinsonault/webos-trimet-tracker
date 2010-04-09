@@ -78,7 +78,7 @@
 }
 
 #busStopSpinner {
-	right:20px;
+	
 }
 
 #has_scheduled_arrival {
@@ -88,10 +88,7 @@
 }
 
 #main-hdr {
-	/*overflow:hidden;
-	
-text-align:left;
-*/
+
 }
 
 #help-body {

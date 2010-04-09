@@ -16,9 +16,8 @@ AddstopAssistant.prototype.setup = function() {
 	
 	// Command Menu Buttons
 	////////////////////////////////
-	
-	/*
-this.addStopModel = {
+
+	this.addStopModel = {
     	label: $L("Add Stop"),
 	    command: "addStop"
     };
@@ -34,7 +33,17 @@ this.addStopModel = {
     };
 
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
-*/
+	
+	// Spinner
+	////////////////////////////////
+	this.controller.setupWidget("addStopSpinner",
+        this.spinnerAttributes = {
+            spinnerSize: "small"
+        },
+        this.spinnerModel = {
+            spinning: false
+        }
+    );
 	
 	// Add Stop Button
 	////////////////////////////////
@@ -74,9 +83,18 @@ this.addStopModel = {
 
 	// Listeners
 	////////////////////////////////
-	this.controller.listen('addStopSubmitButton', Mojo.Event.tap, this.handleAddStop.bind(this));
-	this.controller.listen('lookupOnceButton', Mojo.Event.tap, this.handleLookupOnce.bind(this));
+	
 };
+
+AddstopAssistant.prototype.startSpinner = function(){
+	this.spinnerModel.spinning = true;
+	this.controller.modelChanged(this.spinnerModel);
+}
+
+AddstopAssistant.prototype.stopSpinner = function(){	
+	this.spinnerModel.spinning = false;
+	this.controller.modelChanged(this.spinnerModel);
+}
 
 AddstopAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.command) {	
@@ -109,6 +127,7 @@ AddstopAssistant.prototype.getStopData = function(stopID, action) {
      onFailure: function(response){}
  	});
 	
+	this.startSpinner();
 	
 	var ajaxOptions = {
 		method: 'get',
@@ -150,8 +169,7 @@ AddstopAssistant.prototype.gotStopData = function(action, transport) {
 	this.xmlData = (new DOMParser()).parseFromString(xmlString, "text/xml");
 	
 	// deactivate the spinner
-	$('addStopSubmitButton').mojo.deactivate();
-	$('lookupOnceButton').mojo.deactivate();
+	this.stopSpinner();
 
 	if (this.isStopIDValid()){
 		if(action == "add"){
@@ -216,6 +234,8 @@ AddstopAssistant.prototype.getFailure = function(transport) {
 	var template = new Template($L("Error: Status #{status} returned from Trimet xml request."));
 	var message = template.evaluate(transport);
 	
+	this.stopSpinner();
+	
 	/*
 	 * Show an alert with the error.
 	 */
@@ -275,6 +295,4 @@ AddstopAssistant.prototype.deactivate = function(event) {
 AddstopAssistant.prototype.cleanup = function(event) {
 	/* this function should do any cleanup needed before the scene is destroyed as 
 	   a result of being popped off the scene stack */
-	   this.controller.stopListening('addStopSubmitButton', Mojo.Event.tap, this.handleAddStop.bind(this));
-	   this.controller.stopListening('lookupOnceButton', Mojo.Event.tap, this.handleLookupOnce.bind(this));
 };
