@@ -9,9 +9,9 @@ HelpAssistant.prototype.setup = function() {
 	
 	// Version/Vendor Info
 	////////////////////////////////
-	$('app-info-group').update(AppInfo.title);
-	$('app-version').update("Version: " + AppInfo.version);
-	$('app-vendor').update("Vendor: " + AppInfo.vendor);
+	$("title").update("Help")
+	$('app-info-title').update(AppInfo.title);
+	$('app-description').update("Version: " + AppInfo.version + " by " + AppInfo.vendor);
 	
 	// Support/Credit Lists
 	////////////////////////////////
@@ -23,13 +23,15 @@ HelpAssistant.prototype.setup = function() {
 				detail: AppInfo.authorEmail,
 				subject: "Support: "  + AppInfo.title,
 				type:'email',
-				subtitle: 'Feedback Also Appreciated'
+				subtitle: 'Feedback Also Appreciated',
+				Class: 'img_email'
 			},
 			{
 				text: 'Project Website',
 				subtitle: 'Google Code Hosting',
 				detail: AppInfo.projectWebsite,
-				type: 'web'
+				type: 'web',
+				Class: 'img_web'
 			}
 		]
 	};
@@ -48,7 +50,8 @@ HelpAssistant.prototype.setup = function() {
 				text: AppInfo.authorName,
 				detail: AppInfo.authorWebsite,
 				type:'web',
-				subtitle: 'Google Profile'
+				subtitle: 'Google Profile',
+				Class: 'img_web'
 			}
 		]
 	};
