@@ -4,20 +4,13 @@ function DisplaystopAssistant(stopData) {
 	   to the scene controller (this.controller) has not be established yet, so any initialization
 	   that needs the scene controller should be done in the setup function below. */
 	  
-	/*this.appMenuModel = {
-		items: [
-			Mojo.Menu.editItem,
-			{label: "Help", command: 'do-help'}
-		]
-	};*/
 	  
-	// 
+	// Gather Data from args
 	////////////////////////////////
 	this.stopID = stopData.stop_id;
 	this.description = stopData.description;
 	this.direction = stopData.direction;
 	this.xmlData;
-	this.baseUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=4830CC8DCF9D9BE9EB56D3256&locIDs=';
 }
 
 DisplaystopAssistant.prototype.setup = function() {
@@ -31,7 +24,7 @@ DisplaystopAssistant.prototype.setup = function() {
 	
 	// Menu
 	////////////////////////////////
-	this.controller.setupWidget(Mojo.Menu.appMenu, appMenuAttr, appMenuModel);
+	appMenu.setupMenu(this);
 	
 	// Bus List
 	////////////////////////////////
@@ -94,7 +87,6 @@ DisplaystopAssistant.prototype.updateBusList = function(isScheduled){
 	
 	// Display notice for scheduled stops
 	if(isScheduled == true){
-		Mojo.Log.info("........","Has scheduled arrival");
 		$("has_scheduled_arrival").show();
 	}
 	else{
@@ -111,26 +103,19 @@ DisplaystopAssistant.prototype.handleCommand = function (event) {
 	
 			this.getStopData(this.stopID);
 			break;
-				
 		}
-
 	}
 }
 
 DisplaystopAssistant.prototype.getStopData = function() {
 	if (Mojo.Host.current === Mojo.Host.mojoHost) {
-		var url = '/proxy?url=' + encodeURIComponent(this.baseUrl + this.stopID);
+		var url = '/proxy?url=' + encodeURIComponent(Trimet.baseUrl + this.stopID);
 	}
 	else{
-		url = this.baseUrl + this.stopID;
+		url = Trimet.baseUrl + this.stopID;
 	}
 	
-	this.controller.serviceRequest('palm://com.palm.connectionmanager', {
-     method: 'getstatus',
-     parameters: {},
-     onSuccess: this.ConnectionServiceSuccess.bind(this),
-     onFailure: function(response){}
- 	});
+	Connection.testConnection(this);
 	
 	this.startSpinner();
 	
@@ -140,23 +125,6 @@ DisplaystopAssistant.prototype.getStopData = function() {
 		onComplete: this.gotResults.bind(this),
 		onFailure: this.failure.bind(this)
 	});
-	
-}
-
-DisplaystopAssistant.prototype.ConnectionServiceSuccess = function(response){
-	
-	if (response.isInternetConnectionAvailable == false) {
-		this.controller.showAlertDialog({
-			onChoose: function(value){},
-			title: $L("Error"),
-			message: "No internet connection available.",
-			choices: [{
-				label: $L('OK'),
-				value: 'ok',
-				type: 'color'
-			}]
-		});
-	}
 	
 }
 
@@ -174,19 +142,13 @@ DisplaystopAssistant.prototype.stopSpinner = function(){
  * Called by Prototype when the request succeeds. Parse the XML response
  */
 DisplaystopAssistant.prototype.gotResults = function(transport) {
+	this.xmlData = Trimet.getXML(transport);
 	
-	
-	// Use responseText, not responseXML!! try: reponseJSON 
-	var xmlstring = transport.responseText;	
-
-	// Convert the string to an XML object
-	this.xmlData = (new DOMParser()).parseFromString(xmlstring, "text/xml");
-	
-	if (this.isStopIDValid()){
+	if (!Trimet.hasError(this.xmlData)){
 		this.fillBusList();
 	}
 	else{
-		//TODO: check XML data for error message
+		Trimet.showError(Trimet.getError(this.xmlData));
 	}
 }
 
@@ -203,52 +165,29 @@ DisplaystopAssistant.prototype.fillBusList = function(){
 	for (var index = 0; index < xmlBusList.length; ++index)
 	{
 		var route = xmlBusList[index].getAttribute("shortSign");
-		var unixArrivalTime = this.getArrivalTime(xmlBusList[index]);
+
 		var style = "";
 		
-		var arrivalTime = this.convertToMinutes(unixArrivalTime);
-		
-		if (this.isArrivalScheduled(xmlBusList[index]) == true){
+		var arrivalTime = Trimet.Arrivals.getArrivalTime(xmlBusList[index]);
+
+		if (Trimet.Arrivals.isArrivalScheduled(xmlBusList[index]) == true){
 			isScheduled = true;
 			style = "color: red;";
 		}
 		
-		this.busList.push.apply(this.busList, [{route: route, arrival_time: arrivalTime, style: style}]);
+		var busListData = {
+			route: route,
+			arrival_time: arrivalTime,
+			style: style
+		}
+		
+		this.listModel.items.push(busListData);
 	}
 	//update list on screen
 	this.updateBusList(isScheduled);
 	
 	this.stopSpinner();
 	
-};
-
-DisplaystopAssistant.prototype.getArrivalTime = function(xmlArrival){
-	var arrivalTime;
-	if (this.isArrivalScheduled(xmlArrival) == true){
-		arrivalTime = xmlArrival.getAttribute("scheduled");
-	}
-	else{
-		arrivalTime = xmlArrival.getAttribute("estimated");
-	}
-	return arrivalTime;
-};
-
-DisplaystopAssistant.prototype.isArrivalScheduled = function(xmlArrival){
-	return (xmlArrival.getAttribute("status") == "scheduled");
-};
-
-DisplaystopAssistant.prototype.convertToMinutes = function(unixArrivalTime){
-	
-	var currentUnixTime = this.xmlData.getElementsByTagName("resultSet")[0].getAttribute("queryTime");
-
-	currentUnixTime =  parseInt(currentUnixTime);	
-
-	unixArrivalTime = parseInt(unixArrivalTime);
-	
-	var arrivaltime = Math.round(((unixArrivalTime - currentUnixTime)/1000)/60);
-	
-	// convert to string and return
-	return (arrivaltime + '');
 };
 
 /*
@@ -258,21 +197,14 @@ DisplaystopAssistant.prototype.failure = function(transport) {
 	/*
 	 * Use the Prototype template object to generate a string from the return status.
 	 */
-	Mojo.Log.info("******** Ajax get failure")
+	Mojo.Log.info("******** Ajax get failure");
 	var template = new Template($L("Error: Status #{status} returned from Trimet xml request."));
 	var message = template.evaluate(transport);
 	
 	/*
 	 * Show an alert with the error.
 	 */
-	this.controller.showAlertDialog({
-	    onChoose: function(value) {},
-		title: $L("Error"),
-		message: message,
-		choices:[
-			{label: $L('OK'), value:'ok', type:'color'}    
-		]
-	});
+	Trimet.showError(message);
 }
 
 

@@ -19,5 +19,17 @@
     {
         "scenes": "displaybus",
         "source": "app/assistants/displaybus-assistant.js"
-    }
+    },
+	{
+		"source": "app/common/menu.js"
+	},
+	{
+		"source": "app/common/trimet.js"
+	},
+	{
+		"source": "app/common/connection.js"
+	},
+	{
+		"source": "app/common/error.js"
+	}
 ]

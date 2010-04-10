@@ -34,8 +34,9 @@
 
 .stop_item {
 	margin-left:15px;
-	padding-top:10px;
-	padding-bottom:5px;
+	padding-top:5px;
+	padding-right:10px;
+	padding-bottom:8px;
 	font-size:90%;
 }
 

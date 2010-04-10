@@ -12,7 +12,7 @@ AddstopAssistant.prototype.setup = function() {
 	
 	// Menu
 	////////////////////////////////
-	this.controller.setupWidget(Mojo.Menu.appMenu, appMenuAttr, appMenuModel);
+	appMenu.setupMenu(this);
 	
 	// Command Menu Buttons
 	////////////////////////////////
@@ -100,14 +100,13 @@ AddstopAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.command) {	
 		switch (event.command) {
 			case 'addStop':
-			this.handleAddStop();
+			this.handleAddStopButton();
 			break;
 			
 			case 'lookupOnce':
-			this.handleLookupOnce();
+			this.handleLookupOnceButton();
 			break;
 		}
-
 	}
 }
 
@@ -120,12 +119,7 @@ AddstopAssistant.prototype.getStopData = function(stopID, action) {
 	}
 	
 	// Check for internet connection
-	this.controller.serviceRequest('palm://com.palm.connectionmanager', {
-     method: 'getstatus',
-     parameters: {},
-     onSuccess: this.ConnectionServiceSuccess.bind(this),
-     onFailure: function(response){}
- 	});
+	Connection.testConnection(this);
 	
 	this.startSpinner();
 	
@@ -140,88 +134,30 @@ AddstopAssistant.prototype.getStopData = function(stopID, action) {
 	
 }
 
-AddstopAssistant.prototype.ConnectionServiceSuccess = function(response){
-	
-	if (response.isInternetConnectionAvailable == false) {
-		this.controller.showAlertDialog({
-			onChoose: function(value){},
-			title: $L("Error"),
-			message: "No internet connection available.",
-			choices: [{
-				label: $L('OK'),
-				value: 'ok',
-				type: 'color'
-			}]
-		});
-	}
-	
-}
-
 /*
  * Called by Prototype when the request succeeds. Parse the XML response
  */
 AddstopAssistant.prototype.gotStopData = function(action, transport) {
 	
-	// Use responseText, not responseXML!! try: reponseJSON 
-	var xmlString = transport.responseText;	
-
-	// Convert the string to an XML object
-	this.xmlData = (new DOMParser()).parseFromString(xmlString, "text/xml");
+	this.xmlData = Trimet.getXML(transport);
 	
 	// deactivate the spinner
 	this.stopSpinner();
-
-	if (this.isStopIDValid()){
-		if(action == "add"){
-			this.handlePop();
-		}
-		else{
+	
+	if (!Trimet.hasError(this.xmlData)){
+		switch (action) {
+			case 'add':
+			this.doAddStop();
+			break;
+			
+			case 'lookup':
 			this.doLookupOnce();
+			break;
 		}
 	}
 	else{
-		
-		var errorMessage = this.xmlData.getElementsByTagName("errorMessage")[0].childNodes[0].nodeValue;
-		this.controller.showAlertDialog({
-		    onChoose: function(value) {},
-			title: $L("Error"),
-			message: errorMessage,
-			choices:[{label: $L('OK'), value:'ok', type:'color'}]
-		});
+		Trimet.showError(this, Trimet.getError(this.xmlData));
 	}
-}
-
-/*
- * Called by Prototype when the request succeeds. Parse the XML response
- */
-AddstopAssistant.prototype.gotLookupResults = function(transport) {
-	
-	// Use responseText, not responseXML!! try: reponseJSON 
-	var xmlString = transport.responseText;	
-
-	// Convert the string to an XML object
-	this.xmlData = (new DOMParser()).parseFromString(xmlString, "text/xml");
-
-	// deactivate the spinner
-	$('lookupOnceButton').mojo.deactivate();
-
-	if (this.isStopIDValid()){
-		this.doLookupOnce();
-	}
-	else{
-		var errorMessage = this.xmlData.getElementsByTagName("errorMessage")[0].childNodes[0].nodeValue;
-		this.controller.showAlertDialog({
-		    onChoose: function(value) {},
-			title: $L("Error"),
-			message: errorMessage,
-			choices:[{label: $L('OK'), value:'ok', type:'color'}]
-		});
-	}
-}
-
-AddstopAssistant.prototype.isStopIDValid = function(transport){
-	
-	return this.xmlData.getElementsByTagName("errorMessage").length == 0;
 }
 
 /*
@@ -239,22 +175,15 @@ AddstopAssistant.prototype.getFailure = function(transport) {
 	/*
 	 * Show an alert with the error.
 	 */
-	this.controller.showAlertDialog({
-	    onChoose: function(value) {},
-		title: $L("Error"),
-		message: message,
-		choices:[
-			{label: $L('OK'), value:'ok', type:'color'}
-		]
-	});
+	Trimet.showError(message);
 }
 
-AddstopAssistant.prototype.handleAddStop = function()
+AddstopAssistant.prototype.handleAddStopButton = function()
 {
 	this.getStopData(this.textFieldModel.value, "add");
 }
 
-AddstopAssistant.prototype.handleLookupOnce = function()
+AddstopAssistant.prototype.handleLookupOnceButton = function()
 {
 	this.getStopData(this.textFieldModel.value, "lookup");
 }
@@ -268,7 +197,7 @@ AddstopAssistant.prototype.doLookupOnce = function(){
 	this.controller.stageController.pushScene('displaystop', stopData);
 }
 
-AddstopAssistant.prototype.handlePop = function()
+AddstopAssistant.prototype.doAddStop = function()
 {
 	//pop the current scene off the scene stack
 	var stopData = {

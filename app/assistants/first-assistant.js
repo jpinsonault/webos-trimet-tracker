@@ -22,7 +22,7 @@ FirstAssistant.prototype.setup = function() {
         
 	// Menu
 	////////////////////////////////
-	this.controller.setupWidget(Mojo.Menu.appMenu, appMenuAttr, appMenuModel);
+	appMenu.setupMenu(this);
 	
 	 
 	// Add Stop button
@@ -166,10 +166,6 @@ FirstAssistant.prototype.listClickHandler = function(event){
 FirstAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
-	  
-	if (this.stopList.length == 0){
-		// show the empty-list message
-	}
 	
 	if (event != undefined) {
 		// Push the stop data from the Add Stop scene onto the stopList

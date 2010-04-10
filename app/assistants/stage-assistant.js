@@ -1,12 +1,5 @@
 function StageAssistant() {
 	/* this is the creator function for your stage assistant object */
-	appMenuAttr = {omitDefaultItems: true};
-	appMenuModel = {
-		items: [
-			Mojo.Menu.editItem,
-			{label: "Help", command: 'do-help'}
-		]
-	};
 }
 
 StageAssistant.prototype.setup = function() {
