@@ -30,6 +30,6 @@
 		"source": "app/common/connection.js"
 	},
 	{
-		"source": "app/common/error.js"
+		"source": "app/common/appinfo.js"
 	}
 ]

@@ -5,9 +5,9 @@ function FirstAssistant() {
 	   that needs the scene controller should be done in the setup function below. */
 	  
 	  
-	 // Setup Depot
-	////////////////////////////////
-	// The depot only has one key: "stops", a list of stop ID and Description pairs
+	  // Setup Depot
+	 ///////////////////////////////
+	// The depot only has one key: "stops"
 	///////////////////////////////
 	var options = {
 		name: "trimet_tracker_db", //Name used for the HTML5 database name. (required)

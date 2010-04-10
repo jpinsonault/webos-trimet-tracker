@@ -6,13 +6,90 @@ function HelpAssistant() {
 }
 
 HelpAssistant.prototype.setup = function() {
-	/* this function is for setup tasks that have to happen when the scene is first created */
-		
-	/* use Mojo.View.render to render view templates and add them to the scene, if needed */
 	
-	/* setup widgets here */
+	// Version/Vendor Info
+	////////////////////////////////
+	$('app-info-group').update(AppInfo.title);
+	$('app-version').update("Version: " + AppInfo.version);
+	$('app-vendor').update("Vendor: " + AppInfo.vendor);
 	
-	/* add event handlers to listen to events from widgets */
+	// Support/Credit Lists
+	////////////////////////////////
+	this.supportListModel = {
+		listTitle: $L('Support:'),
+		items: [
+			{
+				text: 'Send Email',
+				detail: AppInfo.authorEmail,
+				subject: "Support: "  + AppInfo.title,
+				type:'email',
+				subtitle: 'Feedback Also Appreciated'
+			},
+			{
+				text: 'Project Website',
+				subtitle: 'Google Code Hosting',
+				detail: AppInfo.projectWebsite,
+				type: 'web'
+			}
+		]
+	};
+	
+	this.supportListAttrs = {
+		itemTemplate:'help/listitem',
+		listTemplate:'help/listcontainer',
+		emptyTemplate:'help/emptylist',
+		swipeToDelete: false
+	};
+	
+	this.creditsListModel = {
+		listTitle: $L('Credits:'),
+		items: [
+			{
+				text: AppInfo.authorName,
+				detail: AppInfo.authorWebsite,
+				type:'web',
+				subtitle: 'Google Profile'
+			}
+		]
+	};
+	
+	this.creditsListAttrs = {
+		itemTemplate:'help/listitem',
+		listTemplate:'help/listcontainer',
+		emptyTemplate:'help/emptylist',
+		swipeToDelete: false
+	};
+	
+	this.controller.setupWidget('support-list', this.supportListAttrs, this.supportListModel);
+	this.controller.setupWidget('credits-list', this.creditsListAttrs, this.creditsListModel);
+	
+	// Listeners
+	////////////////////////////////
+	Mojo.Event.listen(this.controller.get('support-list'),Mojo.Event.listTap,this.handleListTap.bind(this))
+	Mojo.Event.listen(this.controller.get('credits-list'),Mojo.Event.listTap,this.handleListTap.bind(this))
+};
+
+HelpAssistant.prototype.handleListTap = function(event) {
+	switch (event.item.type){
+		case 'web':
+		this.controller.serviceRequest("palm://com.palm.applicationManager", {
+			method: "open",
+			parameters:  {
+				id: 'com.palm.app.browser',
+				params: {
+				target: event.item.detail
+				}
+			}
+		});
+		break;
+		/////////////////////////////
+		case 'email':
+		this.controller.serviceRequest('palm://com.palm.applicationManager', {
+		    method:'open',
+		    parameters:{ target: 'mailto:' + event.item.detail + "?subject="+event.item.subject}
+		});	
+		break;
+	}
 };
 
 HelpAssistant.prototype.activate = function(event) {
@@ -28,4 +105,6 @@ HelpAssistant.prototype.deactivate = function(event) {
 HelpAssistant.prototype.cleanup = function(event) {
 	/* this function should do any cleanup needed before the scene is destroyed as 
 	   a result of being popped off the scene stack */
+	Mojo.Event.stopListening(this.controller.get('support-list'),Mojo.Event.listTap,this.handleListTap.bind(this))
+	Mojo.Event.stopListening(this.controller.get('credits-list'),Mojo.Event.listTap,this.handleListTap.bind(this))
 };
