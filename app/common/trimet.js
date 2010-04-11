@@ -6,7 +6,8 @@ Trimet.Arrivals = {};
  // Constants
 ////////////////////////////////
 Trimet.baseUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=4830CC8DCF9D9BE9EB56D3256&locIDs=';
-
+Trimet.daysOfWeek = new Array("Sunday", "Monday", "Tuesday",
+"Wednesday", "Thursday", "Friday", "Saturday");
 
  // Trimet.Error
 ////////////////////////////////
@@ -58,7 +59,7 @@ Trimet.Arrivals.isArrivalScheduled = function(xmlArrival){
 };
 
 // Takes in a xml arrival and outputs the number of minutes left
-Trimet.Arrivals.getArrivalTime = function(xmlArrival){
+Trimet.Arrivals.getMinutesLeft = function(xmlArrival){
 	var unixArrivalTime;
 	if (this.isArrivalScheduled(xmlArrival) == true){
 		unixArrivalTime = xmlArrival.getAttribute("scheduled");
@@ -71,3 +72,25 @@ Trimet.Arrivals.getArrivalTime = function(xmlArrival){
 	
 	return arrivalTime;
 };
+
+Trimet.Arrivals.getScheduledTime = function(xmlArrival){
+	var scheduledArrivalTime = xmlArrival.getAttribute("scheduled");
+	
+	var arrivalTime = new Date();
+	var now = new Date();
+	
+	arrivalTime.setTime(scheduledArrivalTime);
+	
+	var arrivalString = arrivalTime.toLocaleTimeString();
+	arrivalString = Trimet.Arrivals.stripSeconds(arrivalString);
+	
+	if (arrivalTime.getDay() != now.getDay()){
+		arrivalString += ", " + Trimet.daysOfWeek[arrivalTime.getDay()];
+	} 
+	
+	return arrivalString;
+}
+
+Trimet.Arrivals.stripSeconds = function(timeString){
+	return timeString.substring(0, timeString.length - 3);
+}

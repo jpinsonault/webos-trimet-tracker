@@ -12,6 +12,7 @@ HelpAssistant.prototype.setup = function() {
 	$("title").update("Help")
 	$('app-info-title').update(AppInfo.title);
 	$('app-description').update("Version: " + AppInfo.version + " by " + AppInfo.vendor);
+	$('copyright').update(AppInfo.copyright);
 	
 	// Support/Credit Lists
 	////////////////////////////////

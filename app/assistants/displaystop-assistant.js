@@ -44,14 +44,13 @@ DisplaystopAssistant.prototype.setup = function() {
     };
 	
 	this.controller.setupWidget('bus_list', this.ListAttrs, this.listModel);
-	Mojo.Log.info("********** About to update")
 	
 	// Refresh button
 	////////////////////////////////
 	
 	this.reloadModel = {
     	label: $L("Refresh"),
-    	//icon: "refresh",
+    	icon: "refresh",
 	    command: "refreshStops"
     };
                         
@@ -168,7 +167,8 @@ DisplaystopAssistant.prototype.fillBusList = function(){
 
 		var style = "";
 		
-		var arrivalTime = Trimet.Arrivals.getArrivalTime(xmlBusList[index]);
+		var arrivalTime = Trimet.Arrivals.getMinutesLeft(xmlBusList[index]);
+		var scheduledtime = Trimet.Arrivals.getScheduledTime(xmlBusList[index]);
 
 		if (Trimet.Arrivals.isArrivalScheduled(xmlBusList[index]) == true){
 			isScheduled = true;
@@ -178,6 +178,7 @@ DisplaystopAssistant.prototype.fillBusList = function(){
 		var busListData = {
 			route: route,
 			arrival_time: arrivalTime,
+			scheduled_time: scheduledtime,
 			style: style
 		}
 		
