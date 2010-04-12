@@ -3,12 +3,18 @@
 Trimet = {};
 Trimet.Arrivals = {};
 Trimet.Utility = {};
+Trimet.Timers = {};
 
  // Constants
 ////////////////////////////////
 Trimet.baseUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=4830CC8DCF9D9BE9EB56D3256&locIDs=';
 Trimet.daysOfWeek = new Array("Sunday", "Monday", "Tuesday",
 "Wednesday", "Thursday", "Friday", "Saturday");
+
+// 30 seconds
+Trimet.Timers.refreshTime = 30000;
+// 5 seconds
+Trimet.Timers.updateTime = 5000;
 
  // Trimet.Error
 ////////////////////////////////
@@ -20,7 +26,6 @@ Trimet.Utility.clearList = function(list){
 ////////////////////////////////
 Trimet.hasError = function (xmlData){
 	hasError = (xmlData.getElementsByTagName("errorMessage").length > 0);
-	Mojo.Log.info("*********** Has Error: ", hasError);
 	return hasError; 
 }
 
@@ -39,12 +44,13 @@ Trimet.getXML = function (transport) {
 }
 
 Trimet.showError = function(scene, errorMessage){
-		scene.controller.showAlertDialog({
-		    onChoose: function(value) {},
-			title: $L("Error"),
-			message: errorMessage,
-			choices:[{label: $L('OK'), value:'ok', type:'color'}]
-		});
+	Mojo.Log.info("******* Error: ", errorMessage);
+	scene.controller.showAlertDialog({
+	    onChoose: function(value) {},
+		title: $L("Error"),
+		message: errorMessage,
+		choices:[{label: $L('OK'), value:'ok', type:'color'}]
+	});
 };
 
  // Trimet.Error
@@ -55,7 +61,6 @@ Trimet.Arrivals.convertToMinutes = function(unixArrivalTime){
 	unixArrivalTime = parseInt(unixArrivalTime);
 		
 	var arrivalTime = Math.round(((unixArrivalTime - unixCurrentTime)/1000)/60);
-	Mojo.Log.info("*********** In convertToMinutes");
 	// convert to string and return
 	return (arrivalTime + '');
 }

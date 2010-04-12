@@ -4,6 +4,10 @@ function DisplaystopAssistant(stopData) {
 	   to the scene controller (this.controller) has not be established yet, so any initialization
 	   that needs the scene controller should be done in the setup function below. */
 	  
+	// Timers
+	////////////////////////////////
+	this.countDownTimer = "";
+	this.refreshTimer = "";
 	  
 	// Gather Data from args
 	////////////////////////////////
@@ -77,16 +81,47 @@ DisplaystopAssistant.prototype.setup = function() {
 	// put out request for the bus stop data
 	this.controller.get('has_scheduled_arrival').hide();
 	this.getStopData();
+	this.startTimers();
 	
-	// Auto-refresh on activate listener
-	////////////////////////////////
+	// Stage Activate and Deactivate Listeners
+	//////////////////////////////////////////
 	Mojo.Event.listen(this.controller.document, Mojo.Event.stageActivate, this.handleStageActivate.bind(this));
+	Mojo.Event.listen(this.controller.document, Mojo.Event.stageDeactivate, this.handleStageDeactivate.bind(this));
 };
 
+DisplaystopAssistant.prototype.startTimers = function(){
+	// clear the timers if either are active
+	if (this.countDownTimer != "" || this.refreshTimer != ""){
+		this.stopTimers();
+	}
+	
+	this.countDownTimer = setInterval(this.updateTimes.bind(this), Trimet.Timers.updateTime);
+	this.refreshTimer = setInterval(this.getStopData.bind(this), Trimet.Timers.refreshTime);
+
+}
+
+DisplaystopAssistant.prototype.stopTimers = function(){
+	if(this.countDownTimer != ""){
+		clearInterval(this.countDownTimer);
+		this.countDownTimer = "";
+	}
+	if (this.refreshTimer != ""){
+		clearInterval(this.refreshTimer);
+		this.refreshTimer = "";
+	}
+}
 
 // Runs every time the window is put into focus
 DisplaystopAssistant.prototype.handleStageActivate = function(){
+	this.startTimers();
 	this.getStopData();
+	
+}
+
+// Runs every time the window is put out of focus
+DisplaystopAssistant.prototype.handleStageDeactivate = function(){
+	Mojo.Log.info("********** Stage Deactivate")
+	this.stopTimers();
 }
 
 DisplaystopAssistant.prototype.updateBusList = function(isScheduled){
@@ -112,6 +147,8 @@ DisplaystopAssistant.prototype.handleCommand = function (event) {
 }
 
 DisplaystopAssistant.prototype.getStopData = function() {
+	Mojo.Log.info("******** Getting Stop Data");
+	
 	if (Mojo.Host.current === Mojo.Host.mojoHost) {
 		var url = '/proxy?url=' + encodeURIComponent(Trimet.baseUrl + this.stopID);
 	}
@@ -153,10 +190,6 @@ DisplaystopAssistant.prototype.gotResults = function(transport) {
 	
 	if (!Trimet.hasError(this.xmlData)){
 		this.fillBusList();
-		////////////////////////////////////////
-		// Setup Countdown to update the times
-		//////////////////////////////////////
-		this.updateTimes.bind(this).delay(10);
 	}
 	else{
 		Trimet.showError(Trimet.getError(this.xmlData));
@@ -164,10 +197,9 @@ DisplaystopAssistant.prototype.gotResults = function(transport) {
 }
 
 DisplaystopAssistant.prototype.updateTimes = function(){
+	Mojo.Log.info("******** Updating times");
 	Trimet.Utility.clearList(this.busList);
 	this.fillBusList();
-	// Tell it to run this function again in ten seconds
-	this.updateTimes.bind(this).delay(10);
 };
 
 DisplaystopAssistant.prototype.fillBusList = function(){
@@ -236,5 +268,8 @@ DisplaystopAssistant.prototype.deactivate = function(event) {
 
 DisplaystopAssistant.prototype.cleanup = function(event) {
 	/* this function should do any cleanup needed before the scene is destroyed as 
-	   a result of being popped off the scene stack */
+	a result of being popped off the scene stack */
+	Mojo.Event.stopListening(this.controller.document, Mojo.Event.stageActivate, this.handleStageActivate.bind(this));
+	Mojo.Event.stopListening(this.controller.document, Mojo.Event.stageDeactivate, this.handleStageActivate.bind(this));
+
 };
