@@ -2,12 +2,19 @@
 ////////////////////////////////
 Trimet = {};
 Trimet.Arrivals = {};
+Trimet.Utility = {};
 
  // Constants
 ////////////////////////////////
 Trimet.baseUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=4830CC8DCF9D9BE9EB56D3256&locIDs=';
 Trimet.daysOfWeek = new Array("Sunday", "Monday", "Tuesday",
 "Wednesday", "Thursday", "Friday", "Saturday");
+
+ // Trimet.Error
+////////////////////////////////
+Trimet.Utility.clearList = function(list){
+	list.splice(0,list.length);
+}
 
  // Trimet.Error
 ////////////////////////////////

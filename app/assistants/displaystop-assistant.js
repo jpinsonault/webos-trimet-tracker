@@ -76,10 +76,18 @@ DisplaystopAssistant.prototype.setup = function() {
 	
 	// put out request for the bus stop data
 	this.controller.get('has_scheduled_arrival').hide();
-	this.getStopData(this.stopID);
+	this.getStopData();
 	
-	/* add event handlers to listen to events from widgets */
+	// Auto-refresh on activate listener
+	////////////////////////////////
+	Mojo.Event.listen(this.controller.document, Mojo.Event.stageActivate, this.handleStageActivate.bind(this));
 };
+
+
+// Runs every time the window is put into focus
+DisplaystopAssistant.prototype.handleStageActivate = function(){
+	this.getStopData();
+}
 
 DisplaystopAssistant.prototype.updateBusList = function(isScheduled){
 	this.controller.modelChanged(this.listModel);
@@ -97,10 +105,7 @@ DisplaystopAssistant.prototype.handleCommand = function (event) {
 	if (event.type == Mojo.Event.command) {	
 		switch (event.command) {
 			case 'refreshStops':
-			// clear out the bus list
-			this.busList.splice(0,this.busList.length);
-	
-			this.getStopData(this.stopID);
+			this.getStopData();
 			break;
 		}
 	}
@@ -132,7 +137,7 @@ DisplaystopAssistant.prototype.startSpinner = function(){
 	this.controller.modelChanged(this.spinnerModel);
 }
 
-DisplaystopAssistant.prototype.stopSpinner = function(){	
+DisplaystopAssistant.prototype.stopSpinner = function(){
 	this.spinnerModel.spinning = false;
 	this.controller.modelChanged(this.spinnerModel);
 }
@@ -141,19 +146,28 @@ DisplaystopAssistant.prototype.stopSpinner = function(){
  * Called by Prototype when the request succeeds. Parse the XML response
  */
 DisplaystopAssistant.prototype.gotResults = function(transport) {
+	// Clear out the bus list
+	Trimet.Utility.clearList(this.busList);
+	
 	this.xmlData = Trimet.getXML(transport);
 	
 	if (!Trimet.hasError(this.xmlData)){
 		this.fillBusList();
+		////////////////////////////////////////
+		// Setup Countdown to update the times
+		//////////////////////////////////////
+		this.updateTimes.bind(this).delay(10);
 	}
 	else{
 		Trimet.showError(Trimet.getError(this.xmlData));
 	}
 }
 
-DisplaystopAssistant.prototype.isStopIDValid = function(){
-	return true;
-	// TODO actually check
+DisplaystopAssistant.prototype.updateTimes = function(){
+	Trimet.Utility.clearList(this.busList);
+	this.fillBusList();
+	// Tell it to run this function again in ten seconds
+	this.updateTimes.bind(this).delay(10);
 };
 
 DisplaystopAssistant.prototype.fillBusList = function(){
@@ -212,6 +226,7 @@ DisplaystopAssistant.prototype.failure = function(transport) {
 DisplaystopAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
+
 };
 
 DisplaystopAssistant.prototype.deactivate = function(event) {
