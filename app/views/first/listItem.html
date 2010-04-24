@@ -1,9 +1,12 @@
 <div class="palm-row" x-mojo-tap-highlight="momentary">
-	<div class="palm-row-wrapper">
-		<div class="stop_item">
-			<div class="stop_id">#{-stop_id}</div>
-			<div class="stop_description truncating-text">#{-description}: </div>
-			<div class="stop_direction">#{-direction}</div>
+	<div class="palm-row-wrapper truncating-text stop-item">
+		<div class="stop-list-top-section">
+			<div class="stop-id">#{-stop_id}</div>
+			<div class="stop-description truncating-text">#{-description}: </div>
+		</div>
+		<div class="stop-list-bottom-section">
+			<div class="stop-direction">#{-direction} routes: </div>
+			<div class="bus-routes">#{-busRoutesString}</div>
 		</div>
 	</div>
 </div>

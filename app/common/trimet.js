@@ -4,23 +4,76 @@ Trimet = {};
 Trimet.Arrivals = {};
 Trimet.Utility = {};
 Trimet.Timers = {};
+Trimet.Detours = {};
 
  // Constants
 ////////////////////////////////
-Trimet.baseUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=4830CC8DCF9D9BE9EB56D3256&locIDs=';
-Trimet.daysOfWeek = new Array("Sunday", "Monday", "Tuesday",
-"Wednesday", "Thursday", "Friday", "Saturday");
+Trimet.appID = "4830CC8DCF9D9BE9EB56D3256";
+Trimet.baseArrivalsUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=' + Trimet.appID + '&locIDs=';
+Trimet.baseDetoursUrl = 'http://developer.trimet.org/ws/V1/detours?appID=' + Trimet.appID + '&routes=';
+Trimet.daysOfWeek = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
+
+Trimet.NonBusRoutes = {
+	"100": "Blue", 
+	"90": "Red",
+	"200": "Green",
+	"190": "Yellow",
+	"203": "WES"
+}
 
 // 30 seconds
 Trimet.Timers.refreshTime = 30000;
 // 5 seconds
 Trimet.Timers.updateTime = 5000;
 
- // Trimet.Error
+ // Trimet.Utility
 ////////////////////////////////
 Trimet.Utility.clearList = function(list){
-	list.splice(0,list.length);
+	if(list.length > 0){
+		list.splice(0,list.length);	
+	}
 }
+
+Trimet.Utility.parseRouteList = function(routeList){
+	list = [];
+	var newList = routeList;
+	
+	for (var index = 0; index < newList.length; ++index){
+		if(Trimet.Utility.isNonBusRoute(newList[index])){
+			newList[index] = Trimet.NonBusRoutes[newList[index]];
+		}
+	}
+	return routeList.join(", ");
+}
+
+Trimet.Utility.isNonBusRoute = function(stopID){
+	if(Trimet.NonBusRoutes.hasOwnProperty(stopID)){
+		return true;
+	}
+	else{
+		return false;
+	} 
+}
+
+// Spinner 
+////////////////////////////////
+Trimet.Utility.Spinner = function() {
+	this.users = 0;
+	
+	this.addUser = function(){
+		this.users++;
+	}
+	this.removeUser = function(){
+		if(this.users > 0){
+			this.users--;
+		}
+	}
+	
+	this.hasNoUsers = function(){
+		return this.users == 0;
+	}
+};
+
 
  // Trimet.Error
 ////////////////////////////////
@@ -53,7 +106,7 @@ Trimet.showError = function(scene, errorMessage){
 	});
 };
 
- // Trimet.Error
+ // Trimet.Arrivals
 ////////////////////////////////
 Trimet.Arrivals.convertToMinutes = function(unixArrivalTime){
 	var date = new Date();
@@ -105,4 +158,15 @@ Trimet.Arrivals.getScheduledTime = function(xmlArrival){
 
 Trimet.Arrivals.stripSeconds = function(timeString){
 	return timeString.substring(0, timeString.length - 3);
+}
+
+ // Trimet.Detours
+////////////////////////////////
+
+Trimet.Detours.hasDetour = function(xmlArrival){
+	return xmlArrival.getAttribute("detour") == "true";
+}
+
+Trimet.Detours.getDetours = function(xmlData){
+	return xmlData.getElementsByTagName("detour");
 }

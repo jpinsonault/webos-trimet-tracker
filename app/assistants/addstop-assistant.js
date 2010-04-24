@@ -6,6 +6,8 @@ function AddstopAssistant() {
 	this.items = [];
 	this.xmlData;
 	this.baseUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=4830CC8DCF9D9BE9EB56D3256&locIDs=';
+	
+	this.busRoutes = [];
 }
 
 AddstopAssistant.prototype.setup = function() {
@@ -87,11 +89,13 @@ AddstopAssistant.prototype.setup = function() {
 };
 
 AddstopAssistant.prototype.startSpinner = function(){
+	Mojo.Log.info("********* Starting Spinner");
 	this.spinnerModel.spinning = true;
 	this.controller.modelChanged(this.spinnerModel);
 }
 
-AddstopAssistant.prototype.stopSpinner = function(){	
+AddstopAssistant.prototype.stopSpinner = function(){
+	Mojo.Log.info("********* Stopping Spinner");	
 	this.spinnerModel.spinning = false;
 	this.controller.modelChanged(this.spinnerModel);
 }
@@ -112,10 +116,10 @@ AddstopAssistant.prototype.handleCommand = function (event) {
 
 AddstopAssistant.prototype.getStopData = function(stopID, action) {
 	if (Mojo.Host.current === Mojo.Host.mojoHost) {
-		var url = '/proxy?url=' + encodeURIComponent(this.baseUrl + stopID);
+		var url = '/proxy?url=' + encodeURIComponent(Trimet.baseArrivalsUrl + stopID);
 	}
 	else{
-		url = this.baseUrl + stopID;
+		url = Trimet.baseArrivalsUrl + stopID;
 	}
 	
 	// Check for internet connection
@@ -145,6 +149,9 @@ AddstopAssistant.prototype.gotStopData = function(action, transport) {
 	this.stopSpinner();
 	
 	if (!Trimet.hasError(this.xmlData)){
+		
+		this.fillBusRouteList();
+		
 		switch (action) {
 			case 'add':
 			this.doAddStop();
@@ -158,6 +165,20 @@ AddstopAssistant.prototype.gotStopData = function(action, transport) {
 	else{
 		Trimet.showError(this, Trimet.getError(this.xmlData));
 	}
+}
+
+AddstopAssistant.prototype.fillBusRouteList = function(){
+	
+	var xmlBusList = this.xmlData.getElementsByTagName("arrival");
+	
+	for (var index = 0; index < xmlBusList.length; ++index) {
+		var routeNumber = xmlBusList[index].getAttribute("route");
+		
+		if (this.busRoutes.lastIndexOf(routeNumber) < 0){
+			this.busRoutes.push(routeNumber);
+		}
+	}
+	this.busRoutes.sort();
 }
 
 /*
@@ -190,9 +211,11 @@ AddstopAssistant.prototype.handleLookupOnceButton = function()
 
 AddstopAssistant.prototype.doLookupOnce = function(){
 	var stopData = {
-		stop_id: this.textFieldModel.value, 
-		description: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc"),
-		direction: this.xmlData.getElementsByTagName("location")[0].getAttribute("dir")
+		stopID: this.textFieldModel.value, 
+		stopDescription: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc"),
+		direction: this.xmlData.getElementsByTagName("location")[0].getAttribute("dir"),
+		busRoutes: this.busRoutes,
+		listIndex: -1
 	};
 	this.controller.stageController.pushScene('displaystop', stopData);
 }
@@ -201,10 +224,12 @@ AddstopAssistant.prototype.doAddStop = function()
 {
 	//pop the current scene off the scene stack
 	var stopData = {
-		stop_id: this.textFieldModel.value, 
+		stopID: this.textFieldModel.value, 
 		description: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc"),
-		direction: this.xmlData.getElementsByTagName("location")[0].getAttribute("dir")
-	};
+		direction: this.xmlData.getElementsByTagName("location")[0].getAttribute("dir"),
+		busRoutes: this.busRoutes,
+		listIndex: -1
+	};	
 	
 	this.controller.stageController.popScene(stopData);
 

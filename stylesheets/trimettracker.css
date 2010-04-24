@@ -1,68 +1,88 @@
-.my-scene-fade-top {
-	position: fixed; 
-	top: 0; 
-	z-index: 100000;
-	height: 54px; 
-	width: 100%;
-	background: url(../images/my-scene-fade-top.png) top center repeat-x;
-}
-.my-scene-fade-arrow-bottom-two-buttons {
-	position: fixed; 
-	bottom:108px;
-	z-index: 100000;
-	height: 54px; 
-	width: 100%;
-	background:url(../images/fade-arrow-down.png) center bottom no-repeat;
-	-webkit-palm-mouse-target: ignore;
-}
-.scene-footer-spacer.two-buttons {
-	padding-bottom:119px;
-}
-
-.scene-footer {
-	position:fixed; 
-	bottom:0px; 
-	left:0px; 
-	right:0px;
-	-webkit-border-image: url(../images/fade-bottom-light-30px.png) 35 0 0 0 repeat repeat;
-	border-width: 35px 0px 0px 0px;
-	-webkit-palm-mouse-target: ignore;
-}
-.scene-footer-wrapper {
-	margin-top:-10px;
-}
-
-.stop_item {
+.stop-item {
 	margin-left:15px;
 	padding-top:5px;
+	padding-bottom:5px;
 	padding-right:10px;
-	padding-bottom:8px;
-	font-size:90%;
 }
 
-.bus_item {
-	margin-left:15px;
+.bus-item {
+
 	padding-top:5px;
-	font-size:85%;
+	padding-bottom:5px;
 }
 
-.stop_id {
+.detour-item {
+	padding-bottom:5px;
+}
+
+.stop-id {
 	color:green;
 	float:right;
+	font-size:16px;
+}
+
+.bus-routes {
+	color: blue;
+	font-size: 14px;
+	float:right;
+}
+
+.stop-list-top-section {
+	margin-left:10px;
+	margin-right:10px;
+	margin-bottom:5px;
+}
+
+.stop-list-bottom-section {
+	margin-left:10px;
 	margin-right:10px;
 }
 
-.stop_description {
+.bus-list-top-section {
+	margin-right:10px;
+	margin-bottom:5px;
+}
+
+.bus-list-bottom-section {
+	margin-right:10px;
+}
+
+.detour-description {
 	
 }
 
-.arrival_time {
-	float:right;
-	color:green;
+.stop-direction {
+	float:left;
+	margin-left:10px;
+	font-size:14px;
+}
+
+.stop-description {
+	font-size:18px;
 	margin-right:10px;
 }
 
-.minute_tag {
+.bus-description {
+	margin-left:15px;
+	font-size:17px;
+}
+
+.arrival-time {
+	color:green;
+	font-size:18px;
+	float:right;
+}
+
+.scheduled-time {
+}
+
+.arrival-detour {
+	color:red;
+	font-size:14px;
+	float:right;
+}
+
+.minute-tag {
 	font-size:85%;
 }
 
@@ -70,23 +90,11 @@
 	color:green;
 }
 
-.stop_direction {
-	margin-left:15px;
-	margin-right:10px;
-	font-size:75%;
-	
-	color:black;
-}
-
 #busStopSpinner {
 	
 }
 
 #has_scheduled_arrival {
-
-}
-
-#main-hdr {
 
 }
 

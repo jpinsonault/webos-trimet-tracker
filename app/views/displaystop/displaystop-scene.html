@@ -1,16 +1,18 @@
 <div id="main" class="palm-hasheader">
 	<div class="palm-header center" id="main-hdr">
 		<div x-mojo-element="Spinner" id="busStopSpinner" class="busStopSpinner"></div>
-		<div id="stop_header" class="truncating-text"></div>
+		<div id="stop-header" class="truncating-text"></div>
 	</div>
 	
-	<div id="bus_list" x-mojo-element="List"></div>	
-	<div class="palm-group" id="has_scheduled_arrival" style="display:none;">
+	<div id="bus-list" x-mojo-element="List"></div>
+	<div id="detour-list" x-mojo-element="List" style="display:none;"></div>	
+	<div class="palm-group">
 		<div class="palm-group-title">Note:</div>
 		<div class="palm-list">
 			<div class="palm-row last">
 				<div class="palm-row-wrapper">
-					<div class="palm-body-text">Times in <font color="red">red</font> are scheduled arrival times, not estimated.</div>
+					<div class="palm-body-text">Arrival times automatically countdown and refresh every 30 seconds.</div>
+					<div class="palm-body-text" id="has_scheduled_arrival" style="display:none;">Times in <font color="red">red</font> are scheduled arrival times, not estimated.</div>
 				</div>
 			</div>
 		</div>

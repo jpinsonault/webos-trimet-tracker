@@ -20,16 +20,13 @@
         "scenes": "displaybus",
         "source": "app/assistants/displaybus-assistant.js"
     },
-	{
-		"source": "app/common/menu.js"
-	},
-	{
-		"source": "app/common/trimet.js"
-	},
-	{
-		"source": "app/common/connection.js"
-	},
-	{
-		"source": "app/common/appinfo.js"
-	}
+    {"source": "app/common/menu.js"},
+    {"source": "app/common/trimet.js"},
+    {"source": "app/common/connection.js"},
+    {"source": "app/common/appinfo.js"},
+    {"source": "app/common/utilities.js"},
+    {
+        "scenes": "showdetour",
+        "source": "app/assistants/showdetour-assistant.js"
+    }
 ]
