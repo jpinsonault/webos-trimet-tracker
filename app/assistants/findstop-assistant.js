@@ -195,12 +195,18 @@ FindstopAssistant.prototype.fillRouteSelector = function(){
 	var xmlRouteList = this.xmlRoutesData.getElementsByTagName("route");
 	
 	for (var index = 0; index < xmlRouteList.length; ++index) {
+		var route = xmlRouteList[index].getAttribute("route");
+		
 		var routeData = {
-			value: xmlRouteList[index].getAttribute("route"),
+			value: route,
 			label: xmlRouteList[index].getAttribute("desc")
 		}
-		
 		this.routeList.push(routeData);
+	}
+	
+	// remove the portland streetcar since it's unsupported by trimet
+	if (this.routeList[6].value == '193'){
+		this.routeList.splice(6,1);
 	}
 
 	this.updateRouteSelector();
