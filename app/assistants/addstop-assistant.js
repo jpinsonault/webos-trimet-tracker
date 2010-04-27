@@ -22,16 +22,23 @@ AddstopAssistant.prototype.setup = function() {
 	this.addStopModel = {
     	label: $L("Add Stop"),
 	    command: "addStop"
+		//icon: 'new'
+    };
+	
+	this.findStopButtonModel = {
+    	label: $L("Find Stop"),
+	    command: "findstop"
     };
 	
 	this.lookupButtonModel = {
-    	label: $L("Look Up Once"),
+    	label: $L("View Once"),
 	    command: "lookupOnce"
     };
 	
 	this.cmdMenuModel = {
         visible: true,
-        items: [this.addStopModel, this.lookupButtonModel]
+        items: [this.addStopModel, this.findStopButtonModel, this.lookupButtonModel]
+
     };
 
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
@@ -68,7 +75,7 @@ AddstopAssistant.prototype.setup = function() {
 	this.controller.setupWidget('lookupOnceButton', {type: Mojo.Widget.activityButton}, this.lookupOnceButtonModel);
 	
 	
-	// Text Field
+	// Add Stop Text Field
 	////////////////////////////////
 	this.textFieldModel = {
        	value : "",
@@ -105,6 +112,10 @@ AddstopAssistant.prototype.handleCommand = function (event) {
 		switch (event.command) {
 			case 'addStop':
 			this.handleAddStopButton();
+			break;
+			
+			case 'findstop':
+			this.handleFindStopButton();
 			break;
 			
 			case 'lookupOnce':
@@ -204,6 +215,11 @@ AddstopAssistant.prototype.handleAddStopButton = function()
 	this.getStopData(this.textFieldModel.value, "add");
 }
 
+AddstopAssistant.prototype.handleFindStopButton = function()
+{
+	this.controller.stageController.pushScene('findstop');
+}
+
 AddstopAssistant.prototype.handleLookupOnceButton = function()
 {
 	this.getStopData(this.textFieldModel.value, "lookup");
@@ -238,6 +254,12 @@ AddstopAssistant.prototype.doAddStop = function()
 AddstopAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
+	  
+	if (event != undefined) {
+		Mojo.Log.info("********* StopID: ", event.stopID);
+		this.textFieldModel.value = event.stopID;
+		this.controller.modelChanged(this.textFieldModel);
+	}
 };
 
 AddstopAssistant.prototype.deactivate = function(event) {

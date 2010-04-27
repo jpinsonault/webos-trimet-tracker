@@ -28,5 +28,9 @@
     {
         "scenes": "showdetour",
         "source": "app/assistants/showdetour-assistant.js"
+    },
+    {
+        "scenes": "findstop",
+        "source": "app/assistants/findstop-assistant.js"
     }
 ]

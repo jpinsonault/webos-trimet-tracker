@@ -11,6 +11,8 @@ Trimet.Detours = {};
 Trimet.appID = "4830CC8DCF9D9BE9EB56D3256";
 Trimet.baseArrivalsUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=' + Trimet.appID + '&locIDs=';
 Trimet.baseDetoursUrl = 'http://developer.trimet.org/ws/V1/detours?appID=' + Trimet.appID + '&routes=';
+Trimet.baseRoutesUrl = 'http://developer.trimet.org/ws/V1/routeConfig/appid/' + Trimet.appID ;
+Trimet.endOfRoutesUrl = '/dir/true/stops/route/';
 Trimet.daysOfWeek = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
 Trimet.NonBusRoutes = {

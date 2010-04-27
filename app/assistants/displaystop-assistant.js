@@ -15,6 +15,7 @@ function DisplaystopAssistant(stopData) {
 	// 	requests to use the same spinner
 	////////////////////////////////
 	this.spinnerTracker = new Trimet.Utility.Spinner();  
+	
 	// Gather Data from args
 	////////////////////////////////
 	this.stopID = stopData.stopID;
