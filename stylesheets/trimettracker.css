@@ -2,7 +2,7 @@
 	margin-left:15px;
 	padding-top:5px;
 	padding-bottom:5px;
-	padding-right:10px;
+	padding-right:5px;
 }
 
 .bus-item {
@@ -28,14 +28,14 @@
 }
 
 .stop-list-top-section {
-	margin-left:10px;
-	margin-right:10px;
+	margin-left:5px;
+	margin-right:5px;
 	margin-bottom:5px;
 }
 
 .stop-list-bottom-section {
-	margin-left:10px;
-	margin-right:10px;
+	margin-left:5px;
+	margin-right:5px;
 }
 
 .bus-list-top-section {

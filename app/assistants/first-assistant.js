@@ -90,6 +90,8 @@ FirstAssistant.prototype.listDeleteHandler = function(event){
 	// Remove the item and re-save the depot
 	this.stopList.splice(event.index,1);
 	TrimetTracker.stopListDepot.add("stops", this.stopList, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this));
+	
+	this.updateStopList();
 }
 
 FirstAssistant.prototype.listReorderHandler = function(event){

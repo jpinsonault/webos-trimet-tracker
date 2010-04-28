@@ -11,7 +11,7 @@ AppInfo.vendor = Mojo.appInfo.vendor;
 AppInfo.copyright = '&copy; Copyright 2010 Joe Pinsonault';
 
 // HTML string to display in the new-features dialog
-AppInfo.newFeatures = '<div class="title">TriMet Tracker 1.2.5</div><div class="palm-body-text update-bullets"><li>Now displays detour information</li><li>Shows the routes that go to each stop. (You will need to click on the stop once for them to show up)</li></div>';
+AppInfo.newFeatures = '<div class="title">TriMet Tracker 1.3</div><div class="palm-body-text"><li>You can now search for a stop ID from within the app, no need to visit the website.</li></div><div class="title">TriMet Tracker 1.2.5</div><div class="palm-body-text"><li>Now displays detour information</li><li>Shows the routes that go to each stop. (You will need to click on the stop once for them to show up)</li></div>';
 AppInfo.showNewFeatures = function(){
 	
 }
