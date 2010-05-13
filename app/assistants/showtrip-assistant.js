@@ -14,6 +14,10 @@ ShowtripAssistant.prototype.setup = function() {
 	////////////////////////////////
 	appMenu.setupMenu(this);
 	
+	// View Menu
+	////////////////////////////////
+	this.setupViewMenu();
+	
 	// Stop List
 	////////////////////////////////
 	this.tripList = [];
@@ -30,26 +34,8 @@ ShowtripAssistant.prototype.setup = function() {
 	
     this.controller.setupWidget('trip-list', this.tripListAttrs, this.tripListModel);
 	
-	// Depart Option Radio
-	////////////////////////////////
-	
-	this.optionsRadioAttributes = {
-		choices: [
-			{label : 'Option 1', value : 1},
-			{label : 'Option 2', value : 2},
-			{label : 'Option 3', value : 3}
-		]
-	}
-
-	this.optionsRadioModel = {
-		value : 1,
-		disabled:false
-	}
-	this.controller.setupWidget('options-radio', this.optionsRadioAttributes,this.optionsRadioModel );
-	
 	// Listeners
 	////////////////////////////////
-	this.controller.listen('options-radio', Mojo.Event.propertyChange, this.onRadioChange.bind(this));
 	this.onStopButtonTapHandler = this.onStopButtonTap.bindAsEventListener(this);
 	
 	// Misc Setup
@@ -57,6 +43,38 @@ ShowtripAssistant.prototype.setup = function() {
 	this.fillItineraryDetails();
 	
 	this.fillTripList();
+};
+
+ShowtripAssistant.prototype.handleCommand = function (event) {
+	if (event.type == Mojo.Event.command) {	
+		this.onRadioChange();
+	}
+}
+
+ShowtripAssistant.prototype.setupViewMenu = function() {
+	this.viewMenuItems = [];
+	
+	for(var index = 0; index < this.trimetTrip.getNumberOfItineraries(); index++){
+		var viewMenuItem = {
+			label: "Option " + (index+1),
+			command: (index+1)+''
+		}
+		this.viewMenuItems.push(viewMenuItem);
+	}
+	this.viewMenuModel = {
+		label: 'Itineraries',
+		visible: true,
+		items:[
+			{
+				label: 'Itineraries',
+				toggleCmd:'1',
+				items: this.viewMenuItems
+			},
+			{}
+		]
+	}
+	
+	this.controller.setupWidget(Mojo.Menu.viewMenu, {}, this.viewMenuModel);
 };
 
 ShowtripAssistant.prototype.fillTripList = function() {
@@ -80,7 +98,7 @@ ShowtripAssistant.prototype.fillItineraryDetails = function() {
 
 ShowtripAssistant.prototype.onRadioChange = function(propertyChangeEvent) {
 	this.cleanupStopListeners();
-	this.trimetTrip.setItinerary(propertyChangeEvent.value);
+	this.trimetTrip.setItinerary(this.viewMenuModel.items[0].toggleCmd);
 	
 	this.fillItineraryDetails();
 	this.fillTripList();
@@ -127,7 +145,6 @@ ShowtripAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
 	  
-	Mojo.Log.info("********* In Showtrip Activate");
 	this.setupStopListeners();	
 };
 

@@ -34,6 +34,10 @@ TripPlanner.prototype.setItinerary = function (number){
 	}
 };
 
+TripPlanner.prototype.getNumberOfItineraries = function(){
+	return this.xmlItineraries.childNodes.length;
+}
+
 TripPlanner.prototype.getItineraries = function(){
 	return this.xmlTripData.getElementsByTagName("itineraries")[0];
 }
