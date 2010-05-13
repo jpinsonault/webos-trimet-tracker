@@ -13,6 +13,7 @@ Trimet.baseArrivalsUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=' + T
 Trimet.baseDetoursUrl = 'http://developer.trimet.org/ws/V1/detours?appID=' + Trimet.appID + '&routes=';
 Trimet.baseRoutesUrl = 'http://developer.trimet.org/ws/V1/routeConfig/appid/' + Trimet.appID ;
 Trimet.endOfRoutesUrl = '/dir/true/stops/route/';
+Trimet.baseTripPlannerUrl = 'http://developer.trimet.org/ws/V1/trips/tripplanner/appid/' + Trimet.appID;
 Trimet.daysOfWeek = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
 Trimet.NonBusRoutes = {
@@ -57,6 +58,38 @@ Trimet.Utility.isNonBusRoute = function(stopID){
 	} 
 }
 
+Trimet.Utility.encodeUrl = function(tripParameters){
+	// http://developer.trimet.org/ws/V1/trips/tripplanner/maxIntineraries/6/format/xml/fromplace/
+	// pdx/toplace/zoo/date/9-9-2009/time/2:00%20PM/arr/D/min/T/walk/0.50/mode/A/appId/YourAppIdHere
+	
+	var am = "am";
+	var hours = tripParameters.time.getHours();
+	var minutes = tripParameters.time.getMinutes();
+	
+	if (hours >= 12){
+		am = "pm";
+		
+		if (hours > 12){
+			hours = hours - 12;
+		}
+	}
+	
+	var time = hours + ":" + minutes + " " + am;
+	
+	var month = tripParameters.date.getMonth() + 1;
+	var day = tripParameters.date.getDate();
+	var year = tripParameters.date.getFullYear();
+	
+	var date = month + "-" + day + "-" + year;
+	
+	var url = Trimet.baseTripPlannerUrl + '/fromplace/' + tripParameters.fromPlace +
+		'/toplace/' + tripParameters.toPlace + '/arr/' + tripParameters.arr +
+		'/min/' + tripParameters.min + '/mode/' + tripParameters.mode +
+		'/time/' + time + '/date/' + date;
+		
+	return url;
+}
+
 // Spinner 
 ////////////////////////////////
 Trimet.Utility.Spinner = function() {
@@ -99,7 +132,7 @@ Trimet.getXML = function (transport) {
 }
 
 Trimet.showError = function(scene, errorMessage){
-	Mojo.Log.info("******* Error: ", errorMessage);
+	Mojo.Log.info("********* Error Dialog: ", errorMessage);
 	scene.controller.showAlertDialog({
 	    onChoose: function(value) {},
 		title: $L("Error"),

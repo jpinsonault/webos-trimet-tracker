@@ -1,0 +1,20 @@
+<div class="palm-row">
+	<div class="palm-row-wrapper trip-list-item">
+		<div class="walk-mode" style="#{-walkModeStyle}">
+			Walk #{-distance} miles #{-direction}
+			<span style="#{walkModeStartStyle}"> from <span class="green-text">#{-startLocation}</span>	
+			</span>
+			to <span class="green-text">#{-endLocation}</span>
+		</div>
+		<div class="transit-mode" style="#{-transitModeStyle}">
+			<div class="transit-mode-board">
+				#{-startTime}: Board <span class="green-text">#{routeDescription}</span>
+				<div id="#{startDivID}" stopid="#{-startStopID}" class="trip-button" x-mojo-touch-feedback="delayed">Stop: #{-startStopID}</div>
+			</div>
+			<div class="transit-mode-get-off">
+				#{-endTime}: Get off at <span class="green-text">#{endLocation}</span> 
+				<div id="#{endDivID}" stopid="#{-endStopID}" class="trip-button" x-mojo-touch-feedback="delayed">Stop: #{-endStopID}</div>
+			</div>
+		</div>
+	</div>
+</div>

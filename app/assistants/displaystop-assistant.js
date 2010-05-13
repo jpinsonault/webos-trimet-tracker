@@ -39,8 +39,6 @@ DisplaystopAssistant.prototype.setup = function() {
 	
 	/* setup widgets here */
 	
-	$("stop-header").update(this.stopID + ': ' + this.stopDescription);
-	
 	// Menu
 	////////////////////////////////
 	appMenu.setupMenu(this);
@@ -53,7 +51,7 @@ DisplaystopAssistant.prototype.setup = function() {
 	
 	this.busListModel = {
 		items:this.busList,
-		listTitle: 'Arrival Times: ' + this.direction
+		listTitle: ''
 	};
 	
     this.ListAttrs = {
@@ -118,8 +116,6 @@ DisplaystopAssistant.prototype.setup = function() {
 	this.controller.get('has_scheduled_arrival').hide();
 	
 	this.getStopData();
-	
-	this.getDetourData
 	
 	// Stage Activate and Deactivate Listeners
 	//////////////////////////////////////////
@@ -294,6 +290,10 @@ DisplaystopAssistant.prototype.gotStopDataResults = function(transport) {
 	
 	this.xmlData = Trimet.getXML(transport);
 	
+	this.busStop = new BusStop(this.xmlData);
+	
+	$("stop-header").update(this.stopID + ': ' + this.busStop.getStopDescription());
+	
 	if (!Trimet.hasError(this.xmlData)){
 		this.fillBusRouteList();
 		this.fillBusList();
@@ -366,10 +366,9 @@ DisplaystopAssistant.prototype.updateTimes = function(){
 
 DisplaystopAssistant.prototype.fillBusList = function(){
 	
-	var xmlBusList = this.xmlData.getElementsByTagName("arrival");
+	var xmlBusList = this.busStop.getXmlBusList();
 	var isScheduled = false;
 	var hasDetour = false;
-	
 	
 	
 	for (var index = 0; index < xmlBusList.length; ++index)
@@ -406,6 +405,8 @@ DisplaystopAssistant.prototype.fillBusList = function(){
 		
 		this.busListModel.items.push(busListData);
 	}
+	
+	this.busListModel.listTitle = this.busStop.getDirection();
 	//update list on screen
 	this.updateBusList(isScheduled);
 	

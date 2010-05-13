@@ -23,8 +23,10 @@ FirstAssistant.prototype.setup = function() {
 
 	this.cmdMenuModel = {
    		items: [
-      		{label:'Add Stop', command:'addStop', icon: 'new'}
-   		]};
+      		{label:'Add Stop', command:'addStop', icon: 'new'},
+			{label:'Trip Planner', command:'planTrip'}
+   		]
+	};
 
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
 	
@@ -82,6 +84,9 @@ FirstAssistant.prototype.handleCommand = function (event) {
 			case 'addStop':
 			this.controller.stageController.pushScene('addstop');
 			break;
+			case 'planTrip':
+			this.controller.stageController.pushScene('tripplanner');
+			break;
 		}
 	}
 }
@@ -90,8 +95,6 @@ FirstAssistant.prototype.listDeleteHandler = function(event){
 	// Remove the item and re-save the depot
 	this.stopList.splice(event.index,1);
 	TrimetTracker.stopListDepot.add("stops", this.stopList, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this));
-	
-	this.updateStopList();
 }
 
 FirstAssistant.prototype.listReorderHandler = function(event){
@@ -178,7 +181,7 @@ FirstAssistant.prototype.activate = function(event) {
 		if (event.listIndex < 0)
 		{
 			// Push the stop data from the Add Stop scene onto the stopList
-			this.stopList.push.apply(this.stopList, 
+			this.listModel.items.push.apply(this.stopList, 
 			[{
 				stop_id: event.stopID,
 				description: event.description,
@@ -188,9 +191,8 @@ FirstAssistant.prototype.activate = function(event) {
 			}]);
 		}
 		else{
-			Mojo.Log.info("********* routes: ", event.listIndex);
-			this.stopList[event.listIndex].busRoutes = event.busRoutes;
-			this.stopList[event.listIndex].busRoutesString = Trimet.Utility.parseRouteList(event.busRoutes);
+			this.listModel.items[event.listIndex].busRoutes = event.busRoutes;
+			this.listModel.items[event.listIndex].busRoutesString = Trimet.Utility.parseRouteList(event.busRoutes);
 		}
 		
 		this.updateStopList();

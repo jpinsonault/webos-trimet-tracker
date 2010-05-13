@@ -7,15 +7,14 @@ StageAssistant.prototype.setup = function() {
 	
 	/* for a simple application, the stage assistant's only task is to push the scene, making it
 	   visible */
-	
-	TrimetTracker = {};  
-	
+	  
 	// Setup Depot
 	///////////////////////////////
 	// The depot has two keys: "stops", and "version"
 	// "stops" holds all the stop-list data, "version" holds the version
 	// the app had at last launch. Used to check if the app has updated itself
 	///////////////////////////////
+	TrimetTracker = {};
 	var options = {
 		name: "trimet_tracker_db", //Name used for the HTML5 database name. (required)
 		replace: false // open an existing depot

@@ -38,7 +38,6 @@ AddstopAssistant.prototype.setup = function() {
 	this.cmdMenuModel = {
         visible: true,
         items: [this.addStopModel, this.findStopButtonModel, this.lookupButtonModel]
-
     };
 
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
@@ -126,6 +125,7 @@ AddstopAssistant.prototype.handleCommand = function (event) {
 }
 
 AddstopAssistant.prototype.getStopData = function(stopID, action) {
+	
 	if (Mojo.Host.current === Mojo.Host.mojoHost) {
 		var url = '/proxy?url=' + encodeURIComponent(Trimet.baseArrivalsUrl + stopID);
 	}
@@ -156,12 +156,14 @@ AddstopAssistant.prototype.gotStopData = function(action, transport) {
 	
 	this.xmlData = Trimet.getXML(transport);
 	
+	this.busStop = new BusStop(this.xmlData);
+	Mojo.Log.info("********* Got Stop Data");
 	// deactivate the spinner
 	this.stopSpinner();
 	
-	if (!Trimet.hasError(this.xmlData)){
+	if (!this.busStop.hasError()){
 		
-		this.fillBusRouteList();
+		//this.fillBusRouteList();
 		
 		switch (action) {
 			case 'add':
@@ -174,7 +176,7 @@ AddstopAssistant.prototype.gotStopData = function(action, transport) {
 		}
 	}
 	else{
-		Trimet.showError(this, Trimet.getError(this.xmlData));
+		Trimet.showError(this, this.busStop.getError());
 	}
 }
 
@@ -207,7 +209,7 @@ AddstopAssistant.prototype.getFailure = function(transport) {
 	/*
 	 * Show an alert with the error.
 	 */
-	Trimet.showError(message);
+	Trimet.showError(this, message);
 }
 
 AddstopAssistant.prototype.handleAddStopButton = function()
@@ -228,9 +230,9 @@ AddstopAssistant.prototype.handleLookupOnceButton = function()
 AddstopAssistant.prototype.doLookupOnce = function(){
 	var stopData = {
 		stopID: this.textFieldModel.value, 
-		stopDescription: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc"),
-		direction: this.xmlData.getElementsByTagName("location")[0].getAttribute("dir"),
-		busRoutes: this.busRoutes,
+		stopDescription: this.busStop.getStopDescription(),
+		direction: this.busStop.getDirection(),
+		busRoutes: this.busStop.getBusRouteList(),
 		listIndex: -1
 	};
 	this.controller.stageController.pushScene('displaystop', stopData);
@@ -241,11 +243,11 @@ AddstopAssistant.prototype.doAddStop = function()
 	//pop the current scene off the scene stack
 	var stopData = {
 		stopID: this.textFieldModel.value, 
-		description: this.xmlData.getElementsByTagName("location")[0].getAttribute("desc"),
-		direction: this.xmlData.getElementsByTagName("location")[0].getAttribute("dir"),
-		busRoutes: this.busRoutes,
+		description: this.busStop.getStopDescription(),
+		direction: this.busStop.getDirection(),
+		busRoutes: this.busStop.getBusRouteList(),
 		listIndex: -1
-	};	
+	};
 	
 	this.controller.stageController.popScene(stopData);
 

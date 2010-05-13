@@ -1,0 +1,44 @@
+<div id="main" class="palm-hasheader">
+	<div class="palm-header center" id="tripplanner-header">
+		Trip Planner
+		<div x-mojo-element="Spinner" id="tripplanner-spinner" class="tripplanner-spinner"></div>
+	</div>
+</div>
+<div class="palm-group unlabeled">
+	<div class="palm-list">
+   		<div class="palm-row first">
+			<div class="palm-row-wrapper textfield-group" x-mojo-focus-highlight="true">
+				<div class="title">
+					<div class="label">Start</div>
+      				<div id="start-textfield" name="start-textfield"  x-mojo-element="TextField"></div>
+				</div>
+			</div>
+		</div>
+		<div class="palm-row ">
+			<div class="palm-row-wrapper textfield-group" x-mojo-focus-highlight="true">
+				<div class="title">
+					<div class="label">End</div>
+      				<div id="end-textfield" name="end-textfield"  x-mojo-element="TextField"></div>
+				</div>
+			</div>
+		</div>
+		<div class="palm-row last">
+			
+				<div x-mojo-element="Button" id="get-gps-button"></div>
+				<div class="palm-info-text">Note: Palm's GPS isn't always accurate.</div>
+			
+		</div>
+	</div>
+</div>
+
+
+<div class="palm-group">
+	<div class="palm-group-title">
+		Departure Date/Time:
+	</div>
+	<div class="palm-list">
+		<div id="depart-radio" x-mojo-element="RadioButton"></div>
+		<div id="datepicker" name="datepicker" x-mojo-element="DatePicker"></div>
+		<div id='timepicker' x-mojo-element="TimePicker"></div>
+	</div>
+</div>
