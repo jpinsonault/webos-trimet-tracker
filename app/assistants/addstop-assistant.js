@@ -8,6 +8,8 @@ function AddstopAssistant() {
 	this.baseUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=4830CC8DCF9D9BE9EB56D3256&locIDs=';
 	
 	this.busRoutes = [];
+	
+	this.askForStopList();
 }
 
 AddstopAssistant.prototype.setup = function() {
@@ -94,6 +96,22 @@ AddstopAssistant.prototype.setup = function() {
 	
 };
 
+AddstopAssistant.prototype.askForStopList = function(){
+	// Get the stop list from the depot
+	Mojo.Log.info("********* About to ask for list");
+	TrimetTracker.stopListDepot.simpleGet("stops", this.gotListFromDepot.bind(this), AppInfo.Depot.getFailure.bind(this));
+	
+}
+
+AddstopAssistant.prototype.gotListFromDepot = function(stopList){
+	if (stopList == undefined){
+		Mojo.Log.info("********* Stops undefined")
+		stopList = [];
+	}
+	
+	this.stopList = stopList;
+}
+
 AddstopAssistant.prototype.startSpinner = function(){
 	Mojo.Log.info("********* Starting Spinner");
 	this.spinnerModel.spinning = true;
@@ -163,8 +181,6 @@ AddstopAssistant.prototype.gotStopData = function(action, transport) {
 	
 	if (!this.busStop.hasError()){
 		
-		//this.fillBusRouteList();
-		
 		switch (action) {
 			case 'add':
 			this.doAddStop();
@@ -178,20 +194,6 @@ AddstopAssistant.prototype.gotStopData = function(action, transport) {
 	else{
 		Trimet.showError(this, this.busStop.getError());
 	}
-}
-
-AddstopAssistant.prototype.fillBusRouteList = function(){
-	
-	var xmlBusList = this.xmlData.getElementsByTagName("arrival");
-	
-	for (var index = 0; index < xmlBusList.length; ++index) {
-		var routeNumber = xmlBusList[index].getAttribute("route");
-		
-		if (this.busRoutes.lastIndexOf(routeNumber) < 0){
-			this.busRoutes.push(routeNumber);
-		}
-	}
-	this.busRoutes.sort();
 }
 
 /*
@@ -242,14 +244,17 @@ AddstopAssistant.prototype.doAddStop = function()
 {
 	//pop the current scene off the scene stack
 	var stopData = {
-		stopID: this.textFieldModel.value, 
+		stop_id: this.textFieldModel.value, 
 		description: this.busStop.getStopDescription(),
 		direction: this.busStop.getDirection(),
-		busRoutes: this.busStop.getBusRouteList(),
-		listIndex: -1
+		busRoutes: this.busStop.getBusRouteList()
 	};
 	
-	this.controller.stageController.popScene(stopData);
+	this.stopList.push(stopData);
+	
+	TrimetTracker.stopListDepot.add("stops", this.stopList, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this));
+
+	this.controller.stageController.popScene();
 
 }
 

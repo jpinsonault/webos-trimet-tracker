@@ -93,15 +93,15 @@ FirstAssistant.prototype.handleCommand = function (event) {
 
 FirstAssistant.prototype.listDeleteHandler = function(event){
 	// Remove the item and re-save the depot
-	this.stopList.splice(event.index,1);
-	TrimetTracker.stopListDepot.add("stops", this.stopList, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this));
+	this.listModel.items.splice(event.index,1);
+	TrimetTracker.stopListDepot.add("stops", this.listModel.items, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this));
 }
 
 FirstAssistant.prototype.listReorderHandler = function(event){
 	// Move the stop around and save the depot
-	this.stopList.splice(this.stopList.indexOf(event.item), 1);
-	this.stopList.splice(event.toIndex, 0, event.item);
-	TrimetTracker.stopListDepot.add("stops", this.stopList, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this))
+	this.listModel.items.splice(this.listModel.items.indexOf(event.item), 1);
+	this.listModel.items.splice(event.toIndex, 0, event.item);
+	TrimetTracker.stopListDepot.add("stops", this.listModel.items, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this))
 }
 
 FirstAssistant.prototype.askForStopList = function(){
@@ -113,9 +113,9 @@ FirstAssistant.prototype.askForStopList = function(){
 
 FirstAssistant.prototype.fillStopList = function(stops){
 	
-	
+	this.listModel.items = [];
 	// Fills the stopList with the items from the depot
-
+	
 	if (stops == undefined){
 		Mojo.Log.info("********* Stops undefined")
 		stops = [];
@@ -141,7 +141,7 @@ FirstAssistant.prototype.fillStopList = function(stops){
 			busRoutesString: busRoutesString
 		}
 		
-		this.stopList.push.apply(this.stopList, [stopData]);
+		this.listModel.items.push(stopData);
 	}
 	this.updateStopList();
 };
@@ -160,46 +160,17 @@ FirstAssistant.prototype.handleAddStopButtonPress = function(){
 }
 
 FirstAssistant.prototype.listClickHandler = function(event){
-	Mojo.Log.info("........", "in click handler"); 
+	Mojo.Log.info("........", "in click handler");
 	// Setup the data for the Display Stop Scene and push the scene
-	var stopData = {
-		stopID: event.item.stop_id, 
-		stopDescription: event.item.description,
-		direction: event.item.direction,
-		busRoutes: event.item.busRoutes,
-		listIndex: event.index
-	};
 	
-	this.controller.stageController.pushScene('displaystop', stopData); 
+	this.controller.stageController.pushScene('displaystop', event.item.stop_id);
 }
 
 FirstAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
 	
-	if (event != undefined) {
-		if (event.listIndex < 0)
-		{
-			// Push the stop data from the Add Stop scene onto the stopList
-			this.listModel.items.push.apply(this.stopList, 
-			[{
-				stop_id: event.stopID,
-				description: event.description,
-				direction: event.direction,
-				busRoutes: event.busRoutes,
-				busRoutesString: Trimet.Utility.parseRouteList(event.busRoutes)
-			}]);
-		}
-		else{
-			this.listModel.items[event.listIndex].busRoutes = event.busRoutes;
-			this.listModel.items[event.listIndex].busRoutesString = Trimet.Utility.parseRouteList(event.busRoutes);
-		}
-		
-		this.updateStopList();
-		// Save the depot
-		TrimetTracker.stopListDepot.add("stops", this.stopList, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this));
-
-	}
+	this.askForStopList();
 };
 
 FirstAssistant.prototype.deactivate = function(event) {

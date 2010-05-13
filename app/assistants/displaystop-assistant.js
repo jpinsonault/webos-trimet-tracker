@@ -1,4 +1,4 @@
-function DisplaystopAssistant(stopData) {
+function DisplaystopAssistant(stopID) {
 	/* this is the creator function for your scene assistant object. It will be passed all the 
 	   additional parameters (after the scene name) that were passed to pushScene. The reference
 	   to the scene controller (this.controller) has not be established yet, so any initialization
@@ -18,16 +18,8 @@ function DisplaystopAssistant(stopData) {
 	
 	// Gather Data from args
 	////////////////////////////////
-	this.stopID = stopData.stopID;
-	this.stopDescription = stopData.stopDescription;
-	this.direction = stopData.direction;
-	this.busRoutes = stopData.busRoutes;
-	if (stopData.listIndex == undefined){
-		this.listIndex = -1;
-	}
-	else {
-		this.listIndex = stopData.listIndex;
-	}
+	this.stopID = stopID;
+	
 	this.xmlData;
 	this.xmlDetourList;
 }
@@ -202,10 +194,6 @@ DisplaystopAssistant.prototype.handleCommand = function (event) {
 		//pop the current scene off the scene stack
 		var stopData = {
 			stopID: this.stopID, 
-			description: this.description,
-			direction: this.direction,
-			busRoutes: this.busRoutes,
-			listIndex: this.listIndex
 		};
 		
 		this.controller.stageController.popScene(stopData);
@@ -242,10 +230,10 @@ DisplaystopAssistant.prototype.getDetourData = function() {
 	Mojo.Log.info("******** Getting Detour Data");
 	
 	if (Mojo.Host.current === Mojo.Host.mojoHost) {
-		var url = '/proxy?url=' + encodeURIComponent(Trimet.baseDetoursUrl + this.busRoutes);
+		var url = '/proxy?url=' + encodeURIComponent(Trimet.baseDetoursUrl + this.busStop.getBusRouteList());
 	}
 	else{
-		url = Trimet.baseDetoursUrl + this.busRoutes;
+		url = Trimet.baseDetoursUrl + this.busStop.getBusRouteList();
 	}
 	
 	
@@ -294,12 +282,11 @@ DisplaystopAssistant.prototype.gotStopDataResults = function(transport) {
 	
 	$("stop-header").update(this.stopID + ': ' + this.busStop.getStopDescription());
 	
-	if (!Trimet.hasError(this.xmlData)){
-		this.fillBusRouteList();
+	if (!this.busStop.hasError()){
 		this.fillBusList();
 	}
 	else{
-		Trimet.showError(Trimet.getError(this.xmlData));
+		Trimet.showError(this.busStop.getError());
 	}
 	
 	this.startTimers();
@@ -316,21 +303,6 @@ DisplaystopAssistant.prototype.gotDetourResults = function(transport) {
 	this.xmlDetourList = Trimet.Detours.getDetours(xmlDetourData);
 	
 	this.fillDetourList();
-}
-
-DisplaystopAssistant.prototype.fillBusRouteList = function(){
-	Trimet.Utility.clearList(this.busRoutes);
-	
-	var xmlBusList = this.xmlData.getElementsByTagName("arrival");
-	
-	for (var index = 0; index < xmlBusList.length; ++index) {
-		var routeNumber = xmlBusList[index].getAttribute("route");
-		
-		if (this.busRoutes.lastIndexOf(routeNumber) < 0){
-			this.busRoutes.push(routeNumber);
-		}
-	}
-	this.busRoutes.sort();
 }
 
 DisplaystopAssistant.prototype.fillDetourList = function()

@@ -6,7 +6,7 @@ function ShowtripAssistant(trimetTrip) {
 	  
 	this.trimetTrip = trimetTrip;
 	
-	this.stopListeners = [];
+	this.stopElements = [];
 }
 
 ShowtripAssistant.prototype.setup = function() {
@@ -50,7 +50,7 @@ ShowtripAssistant.prototype.setup = function() {
 	// Listeners
 	////////////////////////////////
 	this.controller.listen('options-radio', Mojo.Event.propertyChange, this.onRadioChange.bind(this));
-	
+	this.onStopButtonTapHandler = this.onStopButtonTap.bindAsEventListener(this);
 	
 	// Misc Setup
 	////////////////////////////////
@@ -90,43 +90,44 @@ ShowtripAssistant.prototype.onRadioChange = function(propertyChangeEvent) {
 
 ShowtripAssistant.prototype.cleanupStopListeners = function() {
 	
-	if(this.stopListeners.length > 0){
+	if(this.stopElements.length > 0){
 		Mojo.Log.info("********* cleaning up stop listeners");
-		for(var index = 0; index < this.stopListeners.length; index++){
-			this.controller.stopListening(this.stopListeners[index], Mojo.Event.tap, this.onStopButtonTap.bind(this));
+		for(var index = 0; index < this.stopElements.length; index++){
+			this.controller.stopListening(this.stopElements[index], Mojo.Event.tap, this.onStopButtonTapHandler);
 		}
 		
 		// clear the listener list
-		this.stopListeners = [];
+		this.stopElements = [];
 	}
 };
 
 ShowtripAssistant.prototype.setupStopListeners = function() {
-	Mojo.Log.info("********* Setting up stop listeners");
-	
 	this.cleanupStopListeners();
+	
+	Mojo.Log.info("********* Setting up stop listeners");
 
 	for(var index = 0; index < this.tripListModel.items.length; index++){
 		if (this.tripListModel.items[index].mode != "Walk") {
-			var startStopListener = this.controller.get(this.tripListModel.items[index].startDivID);
-			var endStopListener = this.controller.get(this.tripListModel.items[index].endDivID);
+			var startStopElement = this.controller.get(this.tripListModel.items[index].startDivID);
+			var endStopElement = this.controller.get(this.tripListModel.items[index].endDivID);
 			
-			this.stopListeners.push(startStopListener, endStopListener);
+			this.stopElements.push(startStopElement, endStopElement);
 			
-			this.controller.listen(startStopListener, Mojo.Event.tap, this.onStopButtonTap.bind(this));
-			this.controller.listen(endStopListener, Mojo.Event.tap, this.onStopButtonTap.bind(this));
+			this.controller.listen(startStopElement, Mojo.Event.tap, this.onStopButtonTapHandler);
+			this.controller.listen(endStopElement, Mojo.Event.tap, this.onStopButtonTapHandler);
 		}
 	}
 };
 
 ShowtripAssistant.prototype.onStopButtonTap = function(event) {
-	Mojo.Log.info("********* stop:", $(event.target.id).attributes.stopid.value, event.type);
+	this.controller.stageController.pushScene('displaystop', $(event.target.id).attributes.stopid.value);
 };
 
 ShowtripAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
 	  
+	Mojo.Log.info("********* In Showtrip Activate");
 	this.setupStopListeners();	
 };
 
