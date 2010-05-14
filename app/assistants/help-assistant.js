@@ -28,6 +28,13 @@ HelpAssistant.prototype.setup = function() {
 				Class: 'img_email'
 			},
 			{
+				text: 'Beagle Apps Blog',
+				detail: AppInfo.blogUrl,
+				type:'web',
+				subtitle: 'Keep up with the latest news',
+				Class: 'img_web'
+			},
+			{
 				text: 'Project Website',
 				subtitle: 'Google Code Hosting',
 				detail: AppInfo.projectWebsite,
