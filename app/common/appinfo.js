@@ -25,7 +25,7 @@ AppInfo.Depot.checkIfUpdated = function(){
 
 AppInfo.Depot.gotVersion = function(oldVersion){
 	Mojo.Log.info("********* Old version: ", oldVersion, " Curent Version: ", AppInfo.version);
-	if(oldVersion == AppInfo.version){
+	if(oldVersion != AppInfo.version){
 		Mojo.Log.info("********* Showing update dialog");
 		AppInfo.Depot.setVersion();
 		AppInfo.showNewFeatures();

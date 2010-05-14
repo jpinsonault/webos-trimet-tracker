@@ -1,7 +1,7 @@
 {
 	"id": "com.beaglesoftware.trimettracker",
-	"version": "1.3.0",
-	"vendor": "Beagle Software",
+	"version": "1.3.5",
+	"vendor": "Beagle Apps",
 	"type": "web",
 	"main": "index.html",
 	"title": "TriMet Tracker",

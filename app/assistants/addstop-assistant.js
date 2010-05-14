@@ -33,7 +33,7 @@ AddstopAssistant.prototype.setup = function() {
     };
 	
 	this.lookupButtonModel = {
-    	label: $L("View Once"),
+    	label: $L("Preview"),
 	    command: "lookupOnce"
     };
 	
