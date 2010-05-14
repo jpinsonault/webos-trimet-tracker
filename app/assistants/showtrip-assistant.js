@@ -87,6 +87,9 @@ ShowtripAssistant.prototype.fillTripList = function() {
 };
 
 ShowtripAssistant.prototype.fillItineraryDetails = function() {
+	$("trip-type").update(this.trimetTrip.getTripTypeString());
+	$("trip-time").update(this.trimetTrip.getTripTime());
+	
 	$("start-time").update(this.trimetTrip.getStartTime());
 	$("end-time").update(this.trimetTrip.getEndTime());
 	$("travel-time").update(this.trimetTrip.getDuration());

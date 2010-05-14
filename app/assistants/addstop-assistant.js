@@ -230,14 +230,7 @@ AddstopAssistant.prototype.handleLookupOnceButton = function()
 }
 
 AddstopAssistant.prototype.doLookupOnce = function(){
-	var stopData = {
-		stopID: this.textFieldModel.value, 
-		stopDescription: this.busStop.getStopDescription(),
-		direction: this.busStop.getDirection(),
-		busRoutes: this.busStop.getBusRouteList(),
-		listIndex: -1
-	};
-	this.controller.stageController.pushScene('displaystop', stopData);
+	this.controller.stageController.pushScene('displaystop', this.textFieldModel.value);
 }
 
 AddstopAssistant.prototype.doAddStop = function()

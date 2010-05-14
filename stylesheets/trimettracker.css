@@ -119,7 +119,16 @@
 	padding-top:2px;
 	padding-bottom:5px;
 	font-size: 15px;
-	height:75px;
+	height:97px;
+}
+
+.trip-info-box-top {
+	text-align:center;
+	border-bottom-width:1px;
+	border-bottom-color:gray;
+	border-bottom-style:inset;
+	padding-bottom:4px;
+	color:#0000c4;
 }
 
 .trip-info-box-left {

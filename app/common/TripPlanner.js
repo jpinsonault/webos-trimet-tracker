@@ -7,6 +7,7 @@ function TripPlanner(xmlTripData){
 		this.xmlItineraries = this.getItineraries();
 		this.xmlTimeDistances = this.getTimeDistances();
 		this.xmlFares = this.getFares();
+		this.xmlParams = this.getXmlParams();
 	}
 }
 
@@ -42,6 +43,10 @@ TripPlanner.prototype.getItineraries = function(){
 	return this.xmlTripData.getElementsByTagName("itineraries")[0];
 }
 
+TripPlanner.prototype.getXmlParams = function(){
+	return this.xmlTripData.getElementsByTagName("request")[0].getElementsByTagName("param");
+}
+
 TripPlanner.prototype.getTimeDistances = function(){
 	var xmlTimeDistances = [];
 	
@@ -55,6 +60,34 @@ TripPlanner.prototype.getTimeDistances = function(){
 
 // Functions - Time and Distance
 ////////////////////////////////
+
+TripPlanner.prototype.getTripTypeString = function(){
+	var tripType = '';
+	for (var index = 0; index < this.xmlParams.length; index++){
+		var attribute = this.xmlParams[index].getAttribute("name");
+		if (attribute == "Arr"){
+			tripType = this.xmlParams[index].firstChild.nodeValue;
+		}
+	}
+	
+	var tripTypes = {
+		"A": "Arrive by",
+		"D": "Depart after"
+	}
+	
+	return tripTypes[tripType];
+}
+
+TripPlanner.prototype.getTripTime = function(){
+	for (var index = 0; index < this.xmlParams.length; index++){
+		var attribute = this.xmlParams[index].getAttribute("name");
+		if (attribute == "time"){
+			var tripTime = this.xmlParams[index].firstChild.nodeValue;
+		}
+	}
+	
+	return tripTime;
+}
 
 TripPlanner.prototype.getFares = function(){
 	var xmlFares = this.xmlTripData.getElementsByTagName("fare");

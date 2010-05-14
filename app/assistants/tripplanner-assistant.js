@@ -80,13 +80,13 @@ TripplannerAssistant.prototype.setup = function() {
 	
 	this.departRadioAttributes = {
 		choices: [
-			{label : 'Depart After', value : 'B'},
+			{label : 'Depart After', value : 'D'},
 			{label : 'Arrive By', value : 'A'},
 		]
 	}
 
 	this.departRadioModel = {
-		value : 'B',
+		value : 'D',
 		disabled:false
 	}
 	this.controller.setupWidget('depart-radio', this.departRadioAttributes,this.departRadioModel );
