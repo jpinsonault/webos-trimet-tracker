@@ -22,8 +22,8 @@
     },
     {"source": "app/common/menu.js"},
     {"source": "app/common/trimet.js"},
-	{"source": "app/common/TripPlanner.js"},
-	{"source": "app/common/BusStop.js"},
+    {"source": "app/common/TripPlanner.js"},
+    {"source": "app/common/BusStop.js"},
     {"source": "app/common/connection.js"},
     {"source": "app/common/appinfo.js"},
     {
@@ -41,5 +41,9 @@
     {
         "scenes": "showtrip",
         "source": "app/assistants/showtrip-assistant.js"
+    },
+    {
+        "scenes": "tripplannerhelp",
+        "source": "app/assistants/tripplannerhelp-assistant.js"
     }
 ]

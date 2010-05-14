@@ -23,7 +23,9 @@ TripplannerAssistant.prototype.setup = function() {
 
 	this.cmdMenuModel = {
    		items: [
-      		{label:'Plan Trip', command:'planTrip'}
+      		{label:'Plan Trip', command:'planTrip'},
+			{label:'Help', command:'help'},
+			{label:'Reverse', command:'reverse'}
    		]
 	};
 
@@ -93,7 +95,7 @@ TripplannerAssistant.prototype.setup = function() {
 	
 	// Get GPS Button
 	////////////////////////////////
-	
+	/*
 	this.gpsButtonAttributes = {
 		type: Mojo.Widget.activityButton
 	}
@@ -104,7 +106,7 @@ TripplannerAssistant.prototype.setup = function() {
 	}
 	this.controller.setupWidget('get-gps-button', this.gpsButtonAttributes, this.gpsButtonModel);
 	Mojo.Event.listen(this.controller.get('get-gps-button'),Mojo.Event.tap, this.onGpsButtonTap.bind(this));
-
+	*/
 };
 
 TripplannerAssistant.prototype.getTripData = function(){
@@ -149,6 +151,14 @@ TripplannerAssistant.prototype.handleCommand = function (event) {
 		switch (event.command) {
 			case 'planTrip':
 			this.getTripData();
+			break;
+			
+			case 'help':
+			this.controller.stageController.pushScene('tripplannerhelp'); 
+			break;
+			
+			case 'reverse':
+			this.reverseLocations();
 			break;
 		}
 	}
@@ -251,6 +261,14 @@ TripplannerAssistant.prototype.stopSpinner = function(){
 		this.spinnerModel.spinning = false;
 		this.controller.modelChanged(this.spinnerModel);
 	}
+}
+
+TripplannerAssistant.prototype.reverseLocations = function(){
+	var temp = this.startTextFieldModel.value;
+	this.startTextFieldModel.value = this.endTextFieldModel.value;
+	this.endTextFieldModel.value = temp;
+	this.controller.modelChanged(this.startTextFieldModel);
+	this.controller.modelChanged(this.endTextFieldModel);
 }
 
 TripplannerAssistant.prototype.activate = function(event) {
