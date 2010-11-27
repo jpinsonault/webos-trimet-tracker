@@ -40,6 +40,9 @@ StageAssistant.prototype.handleCommand = function (event) {
 			case 'do-help':
 			this.controller.stageController.pushScene('help');
 			break;
+			case 'do-donate':
+			this.controller.stageController.pushScene('donate');
+			break;
 		}
 	}
 }

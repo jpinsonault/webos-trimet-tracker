@@ -4,6 +4,7 @@ AppInfo.Depot = {};
 AppInfo.authorEmail = "joe.pinsonault@gmail.com";
 AppInfo.authorName = "Joe Pinsonault";
 AppInfo.title = Mojo.appInfo.title;
+AppInfo.donateUrl = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=8EL3F6464FHPG&lc=US&item_name=Beagle%20Apps&item_number=1&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted';
 AppInfo.blogUrl = 'http://beagleapps.wordpress.com/trimet-tracker/'
 AppInfo.authorWebsite = "http://www.google.com/profiles/joe.pinsonault";
 AppInfo.projectWebsite = "http://code.google.com/p/webos-trimet-tracker/";

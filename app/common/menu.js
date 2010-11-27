@@ -5,7 +5,8 @@ appMenu.appMenuAttr = {omitDefaultItems: true};
 appMenu.appMenuModel = {
 	items: [
 		Mojo.Menu.editItem,
-		{label: "Help", command: 'do-help'}
+		{label: "Help", command: 'do-help'},
+		{label: "Donate", command: 'do-donate'}
 	]
 };
 

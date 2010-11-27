@@ -40,6 +40,13 @@ HelpAssistant.prototype.setup = function() {
 				detail: AppInfo.projectWebsite,
 				type: 'web',
 				Class: 'img_web'
+			},
+			{
+				text: 'Donate',
+				subtitle: 'Paypal donation',
+				detail: AppInfo.donateUrl,
+				type: 'web',
+				Class: 'img_web'
 			}
 		]
 	};

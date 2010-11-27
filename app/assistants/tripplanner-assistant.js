@@ -95,7 +95,7 @@ TripplannerAssistant.prototype.setup = function() {
 	
 	// Get GPS Button
 	////////////////////////////////
-	/*
+	
 	this.gpsButtonAttributes = {
 		type: Mojo.Widget.activityButton
 	}
@@ -106,7 +106,7 @@ TripplannerAssistant.prototype.setup = function() {
 	}
 	this.controller.setupWidget('get-gps-button', this.gpsButtonAttributes, this.gpsButtonModel);
 	Mojo.Event.listen(this.controller.get('get-gps-button'),Mojo.Event.tap, this.onGpsButtonTap.bind(this));
-	*/
+	
 };
 
 TripplannerAssistant.prototype.getTripData = function(){
@@ -215,7 +215,9 @@ TripplannerAssistant.prototype.gotReverseGpsData = function(reverseGpsData){
 	if (reverseGpsData.errorCode == 0) {
 		Mojo.Log.info("********* Reverse GPS Data: ", reverseGpsData.address);
 		
-		this.startTextFieldModel.value = reverseGpsData.address;
+		var fullAddress = reverseGpsData.address;
+		var shortAddress = fullAddress.split(";")[0];
+		this.startTextFieldModel.value = shortAddress;
 		
 		this.controller.modelChanged(this.startTextFieldModel);
 		$("get-gps-button").mojo.deactivate();

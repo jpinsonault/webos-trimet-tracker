@@ -11,7 +11,7 @@ FirstAssistant.prototype.setup = function() {
         
 	// Header Title
 	////////////////////////////////
-	$("first-header").update(AppInfo.title)
+	$("first-header").update("Favorite Stops");
 		
 	// Menu
 	////////////////////////////////
@@ -70,6 +70,7 @@ FirstAssistant.prototype.updateStopList = function(){
 	
 	// show or hide the empty list message
 	if (this.listModel.items.length == 0){
+		Mojo.Log.info("********* List empty");
 		this.showEmptyListMessage();
 	}
 	else{
@@ -95,6 +96,7 @@ FirstAssistant.prototype.listDeleteHandler = function(event){
 	// Remove the item and re-save the depot
 	this.listModel.items.splice(event.index,1);
 	TrimetTracker.stopListDepot.add("stops", this.listModel.items, AppInfo.Depot.addSuccess.bind(this), AppInfo.Depot.addFailure.bind(this));
+	this.updateStopList();
 }
 
 FirstAssistant.prototype.listReorderHandler = function(event){
