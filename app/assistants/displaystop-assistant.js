@@ -89,8 +89,20 @@ DisplaystopAssistant.prototype.setup = function() {
         visible: true,
         items: [this.reloadModel, {}, {}]
     };
-
+	
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
+	
+	// Trimet website Button
+	////////////////////////////////
+	this.trimetWebsiteButtonModel = {
+		buttonLabel : 'Open TriMet Mobile Website',
+		buttonClass : '',
+		disabled : false
+	};
+	
+	this.controller.setupWidget('trimet-website-button', {}, this.trimetWebsiteButtonModel);
+	Mojo.Event.listen(this.controller.get('trimet-website-button'),Mojo.Event.tap, this.onTrimetWebsiteButtonTap.bind(this));
+
 
 	// Spinner
 	////////////////////////////////
@@ -116,7 +128,27 @@ DisplaystopAssistant.prototype.setup = function() {
 	
 };
 
+// Checks if there are no arrivals at the stop
+DisplaystopAssistant.prototype.isEmptyStop = function(){
+	Mojo.Log.info("********* Is empty: ", this.busStop.getLength() == 0);
+	return this.busStop.getLength() == 0;
+}
 
+DisplaystopAssistant.prototype.showEmptyStopMessage = function(){
+	$("empty-stop-message").show();
+}
+
+DisplaystopAssistant.prototype.onTrimetWebsiteButtonTap = function(){
+	this.controller.serviceRequest("palm://com.palm.applicationManager", {
+		method: "open",
+		parameters:  {
+			id: 'com.palm.app.browser',
+			params: {
+				target: Trimet.baseTrackerUrl + this.stopID
+			}
+		}
+	}); 
+}
 
 DisplaystopAssistant.prototype.startTimers = function(){
 	// clear the timers if either are active
@@ -284,6 +316,11 @@ DisplaystopAssistant.prototype.gotStopDataResults = function(transport) {
 	
 	if (!this.busStop.hasError()){
 		this.fillBusList();
+		
+		if(this.isEmptyStop() == true){
+			Mojo.Log.info("********* Showing empty message");
+			this.showEmptyStopMessage();
+		}
 	}
 	else{
 		Trimet.showError(this.busStop.getError());
@@ -429,4 +466,6 @@ DisplaystopAssistant.prototype.cleanup = function(event) {
 	a result of being popped off the scene stack */
 	Mojo.Event.stopListening(this.controller.document, Mojo.Event.stageActivate, this.handleStageActivate.bind(this));
 	Mojo.Event.stopListening(this.controller.document, Mojo.Event.stageDeactivate, this.handleStageActivate.bind(this));
+	Mojo.Event.stopListening(this.controller.get('trimet-website-button'),Mojo.Event.tap, this.onTrimetWebsiteButtonTap.bind(this));
+
 };

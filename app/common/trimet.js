@@ -9,20 +9,56 @@ Trimet.Detours = {};
  // Constants
 ////////////////////////////////
 Trimet.appID = "4830CC8DCF9D9BE9EB56D3256";
+Trimet.StopSearchRadius = '2640';
+Trimet.StreetcarRoute = '193';
+
+// URLs
+////////
 Trimet.baseArrivalsUrl = 'http://developer.trimet.org/ws/V1/arrivals?appID=' + Trimet.appID + '&locIDs=';
+Trimet.baseStopsUrl = 'http://developer.trimet.org/ws/V1/stops?showRoutes=true&feet=' + Trimet.StopSearchRadius + '&appID=' + Trimet.appID + '&ll=';
 Trimet.baseDetoursUrl = 'http://developer.trimet.org/ws/V1/detours?appID=' + Trimet.appID + '&routes=';
 Trimet.baseRoutesUrl = 'http://developer.trimet.org/ws/V1/routeConfig/appid/' + Trimet.appID ;
 Trimet.endOfRoutesUrl = '/dir/true/stops/route/';
 Trimet.baseTripPlannerUrl = 'http://developer.trimet.org/ws/V1/trips/tripplanner/appid/' + Trimet.appID;
+Trimet.baseTrackerUrl = 'http://trimet.org/arrivals/small/tracker.html?locationID=';
+Trimet.baseViewStopUrl = 'http://trimet.org/go/cgi-bin/cstops.pl?lang=pda&action=entry&Loc=';
+
+// Other
+////////
 Trimet.daysOfWeek = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
-Trimet.NonBusRoutes = {
+// Used to convert back and forth between the colors and numbers
+Trimet.RouteToColor = {
 	"100": "Blue", 
 	"90": "Red",
 	"200": "Green",
 	"190": "Yellow",
-	"203": "WES"
+	"203": "WES",
+	"193": "Street Car",
+	"150": "Mall Shuttle",
+	"98": "Shuttle",
+	"93": "Vintage Trolley"
 }
+
+Trimet.ColorToRoute = {
+	"Blue": "100", 
+	"Red": "90",
+	"Green": "200",
+	"Yellow": "190",
+	"WES": "203",
+	"Street Car": "193",
+	"Mall Shuttle": "150",
+	"Shuttle": "98",
+	"Vintage Trolley": "93"
+}
+
+Trimet.RoutesToExclude = [
+	"999",
+	"93",
+	"98",
+	"150"
+]
+
 
 // 30 seconds
 Trimet.Timers.refreshTime = 30000;
@@ -37,25 +73,51 @@ Trimet.Utility.clearList = function(list){
 	}
 }
 
+//Changes the elements in the routelist from the route number to the color
 Trimet.Utility.parseRouteList = function(routeList){
-	list = [];
-	var newList = routeList;
+	var newList = [];
 	
-	for (var index = 0; index < newList.length; ++index){
-		if(Trimet.Utility.isNonBusRoute(newList[index])){
-			newList[index] = Trimet.NonBusRoutes[newList[index]];
+	for (var index = 0; index < routeList.length; ++index){
+		// Remove the excluded routes
+		if(Trimet.RoutesToExclude.lastIndexOf(routeList[index]) < 0){
+			if(Trimet.Utility.isColorRoute(routeList[index])){
+				newList.push(Trimet.RouteToColor[routeList[index]]);
+			}
+			else{
+				newList.push(routeList[index]);
+			}
 		}
 	}
-	return routeList.join(", ");
+	return newList.join(", ");
 }
 
-Trimet.Utility.isNonBusRoute = function(stopID){
-	if(Trimet.NonBusRoutes.hasOwnProperty(stopID)){
-		return true;
+Trimet.Utility.isColorRoute = function(stopID){
+	return Trimet.RouteToColor.hasOwnProperty(stopID);
+}
+
+Trimet.Utility.isColor = function(searchColor){
+	var found = false;
+	
+	for (color in Trimet.ColorToRoute){
+		if (searchColor.toLowerCase() == color.toLowerCase()) {
+			found = true;
+		}
 	}
-	else{
-		return false;
-	} 
+	
+	return found;
+}
+
+Trimet.Utility.getRouteFromColor = function(searchColor){
+	var foundRoute = "";
+	// Replaces the input color string (which may have weird capitalization
+	// with the nice looking string. "GREEN" -> "Green"
+	for (color in Trimet.ColorToRoute){
+		if (searchColor.toLowerCase() == color.toLowerCase()) {
+			foundRoute = Trimet.ColorToRoute[color];
+		}
+	}
+	
+	return foundRoute;
 }
 
 Trimet.Utility.encodeUrl = function(tripParameters){

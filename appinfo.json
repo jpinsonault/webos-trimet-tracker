@@ -1,6 +1,6 @@
 {
 	"id": "com.beaglesoftware.trimettracker",
-	"version": "1.3.5",
+	"version": "1.4.0",
 	"vendor": "Beagle Apps",
 	"type": "web",
 	"main": "index.html",

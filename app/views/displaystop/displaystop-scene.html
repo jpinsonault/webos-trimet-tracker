@@ -4,6 +4,24 @@
 		<div id="stop-header" class="truncating-text">Loading Stop...</div>
 	</div>
 	
+	<div id="empty-stop-message" style="display:none;">
+		<div class="palm-group unlabeled">
+			<div class="palm-list">
+				<div class="palm-row first">
+					<div class="palm-row-wrapper">
+						<div class="title center red-header">No Arrivals</div>
+					</div>
+				</div>
+				<div class="palm-row last">
+					<div class="palm-row-wrapper">
+						<div class="palm-body-text">There do not appear to be any arrivals at this location. If you are trying to view a Street Car, TriMet doesn't currently allow developers to access this data. You can, however, view the stop on the TriMet website.</div>
+						<div x-mojo-element="Button" id="trimet-website-button"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<div id="bus-list" x-mojo-element="List"></div>
 	<div id="detour-list" x-mojo-element="List" style="display:none;"></div>	
 	<div class="palm-group">

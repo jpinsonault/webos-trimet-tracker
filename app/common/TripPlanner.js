@@ -218,6 +218,7 @@ TripPlanner.prototype.getDirectionsList = function(){
 	
 	var stopIDs = [];
 	
+	// Oh dear lord this is a mess. 
 	for(var index = 0; index < xmlLegList.length; index++){
 		
 		var xmlLeg = xmlLegList[index];

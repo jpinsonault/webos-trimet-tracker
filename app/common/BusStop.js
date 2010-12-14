@@ -14,6 +14,11 @@ BusStop.prototype.hasError = function (){
 	return hasError; 
 };
 
+BusStop.prototype.getLength = function (){
+	return this.xmlBusList.length; 
+};
+
+
 BusStop.prototype.getError = function (){
 	return this.xmlArrivalData.getElementsByTagName("errorMessage")[0].childNodes[0].nodeValue;
 };
@@ -23,7 +28,6 @@ BusStop.prototype.getXmlBusList = function(){
 }
 
 BusStop.prototype.getStopDescription = function(){
-	Mojo.Log.info("********* getting stop description: ", this.xmlArrivalData.getElementsByTagName("location")[0].getAttribute("desc"));
 	return this.xmlArrivalData.getElementsByTagName("location")[0].getAttribute("desc");
 }
 

@@ -90,8 +90,16 @@
 	color:green;
 }
 
+.red-header {
+	color:red;
+}
+
 .green-text {
 	color:green;
+}
+
+.red-text {
+	color:red;
 }
 
 .date-time-pickers {
@@ -180,6 +188,25 @@
 .trip-stopid {
 	color:gray;
 }
+
+.horizontal {
+    display: -webkit-inline-box;
+    -webkit-box-orient: horizontal;
+    width: 100%;
+}
+
+.shared-left {
+     width: 38%;
+}
+
+.shared-middle {
+    width: 32%;
+}
+
+.shared-right {
+    width: 30%;
+}
+
 
 #time-date-box {
 	padding-bottom:10px;

@@ -33,7 +33,7 @@ FirstAssistant.prototype.setup = function() {
 	 // Stop List
 	////////////////////////////////
 	this.stopList = [];
-	this.listModel = {listTitle:$L('My List'), items:this.stopList};
+	this.listModel = {items:this.stopList};
 	
     this.ListAttrs = {
 		renderLimit:20,
@@ -46,7 +46,6 @@ FirstAssistant.prototype.setup = function() {
     };
 	
     this.controller.setupWidget('stop_list', this.ListAttrs, this.listModel);		
-	this.listWidget = $('stop_list');
 	
 	//populate the list from file
 	Mojo.Log.info("********* About to ask for list");

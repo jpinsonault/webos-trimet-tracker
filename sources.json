@@ -25,6 +25,8 @@
     {"source": "app/common/TripPlanner.js"},
     {"source": "app/common/BusStop.js"},
     {"source": "app/common/connection.js"},
+	{"source": "app/common/StopSearch.js"},
+	{"source": "app/common/gps.js"},
     {"source": "app/common/appinfo.js"},
     {
         "scenes": "showdetour",

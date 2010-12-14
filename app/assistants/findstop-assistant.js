@@ -203,11 +203,6 @@ FindstopAssistant.prototype.fillRouteSelector = function(){
 		}
 		this.routeList.push(routeData);
 	}
-	
-	// remove the portland streetcar since it's unsupported by trimet
-	if (this.routeList[6].value == '193'){
-		this.routeList.splice(6,1);
-	}
 
 	this.updateRouteSelector();
 
@@ -301,7 +296,6 @@ FindstopAssistant.prototype.handleChooseStopButton = function(){
 	if (this.stopSelectorModel.currentStop > 0){
 		stopData = {
 			stopID: this.stopSelectorModel.currentStop
-			//stopDescription: this.stopSelectorModel.currentStop.label
 		}
 		
 		this.controller.stageController.popScene(stopData);

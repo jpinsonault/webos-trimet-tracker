@@ -226,7 +226,9 @@ TripplannerAssistant.prototype.gotReverseGpsData = function(reverseGpsData){
 
 TripplannerAssistant.prototype.gpsFailure = function(error){
 	Mojo.Log.error("********* GPS Failure: ", error.errorCode);
-	Trimet.showError(this, "GPS Error: " + error.errorCode);
+	
+	$("get-gps-button").mojo.deactivate();
+	Trimet.showError(this, "GPS Error: " + GPS.getError(error.errorCode));
 }
 
 TripplannerAssistant.prototype.reverseGpsFailure = function(error){
