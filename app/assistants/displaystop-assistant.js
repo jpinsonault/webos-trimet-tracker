@@ -76,18 +76,24 @@ DisplaystopAssistant.prototype.setup = function() {
 	this.controller.setupWidget('detour-list', this.detourListAttrs, this.detourListModel);
 	
 
-	// Refresh button
+	// Command Menu
 	////////////////////////////////
 	
 	this.reloadModel = {
     	label: "Refresh",
     	icon: "refresh",
 	    command: "refreshStops"
+    };  
+	
+	this.scheduleModel = {
+    	label: "More info - Schedules",
+    	//icon: "refresh",
+	    command: "openTrimet"
     };                
 
     this.cmdMenuModel = {
         visible: true,
-        items: [this.reloadModel, {}, {}]
+        items: [this.reloadModel, {}, this.scheduleModel]
     };
 	
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.cmdMenuModel);
@@ -139,15 +145,7 @@ DisplaystopAssistant.prototype.showEmptyStopMessage = function(){
 }
 
 DisplaystopAssistant.prototype.onTrimetWebsiteButtonTap = function(){
-	this.controller.serviceRequest("palm://com.palm.applicationManager", {
-		method: "open",
-		parameters:  {
-			id: 'com.palm.app.browser',
-			params: {
-				target: Trimet.baseTrackerUrl + this.stopID
-			}
-		}
-	}); 
+	Trimet.Utility.openURL(this, Trimet.baseTrackerUrl + this.stopID)
 }
 
 DisplaystopAssistant.prototype.startTimers = function(){
@@ -217,6 +215,9 @@ DisplaystopAssistant.prototype.handleCommand = function (event) {
 		switch (event.command) {
 			case 'refreshStops':
 			this.getStopData();
+			break;
+			case 'openTrimet':
+			Trimet.Utility.openURL(this, Trimet.baseViewStopUrl + this.stopID)
 			break;
 		}
 	}
@@ -402,6 +403,7 @@ DisplaystopAssistant.prototype.fillBusList = function(){
 			// no style means the div will be shown
 			detourStyle = "";
 		}
+		
 		
 		var busListData = {
 			routeDescription: routeDescription,

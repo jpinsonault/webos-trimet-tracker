@@ -67,13 +67,18 @@ AddstopAssistant.prototype.setup = function() {
 	
 	// Nearby Stops Button
 	////////////////////////////////
+	
+	this.nearbyStopsButtonAttributes = {
+		type: Mojo.Widget.activityButton
+	}
+	
 	this.nearbyStopsButtonModel = {
 		buttonLabel : 'Find Nearby Stops',
 		buttonClass : '',
 		disabled : false
 	};
 	
-	this.controller.setupWidget('nearby-stops-button', {}, this.nearbyStopsButtonModel);
+	this.controller.setupWidget('nearby-stops-button', this.nearbyStopsButtonAttributes, this.nearbyStopsButtonModel);
 	Mojo.Event.listen(this.controller.get('nearby-stops-button'),Mojo.Event.tap, this.onNearbyStopsButtonTap.bind(this));
 	
 	// Add Stop Text Field
@@ -159,7 +164,8 @@ AddstopAssistant.prototype.fillSearchResultsList = function(){
 				description: this.stopSearch.getDescription(index),
 				direction: this.stopSearch.getDirection(index),
 				busRoutes: busRoutes,
-				busRoutesString: busRoutesString
+				busRoutesString: busRoutesString,
+				distance: this.stopSearch.getDistance(index)
 			}
 			
 			this.searchResultsList.push(stopData);
@@ -324,6 +330,10 @@ AddstopAssistant.prototype.onPreviewButtonTap = function()
 
 AddstopAssistant.prototype.onNearbyStopsButtonTap = function()
 {
+	
+	$("nearby-stops-button").mojo.activate();
+	this.showGettingGPSMessage();
+	
 	var request = this.controller.serviceRequest('palm://com.palm.location', {
 		method:"getCurrentPosition",
 		parameters: {
@@ -333,8 +343,6 @@ AddstopAssistant.prototype.onNearbyStopsButtonTap = function()
 		onSuccess: this.gotGpsData.bind(this),
 		onFailure: this.gpsFailure.bind(this)
 	});
-	
-	this.startSpinner();
 	
 	// For testing, location of downtown portland
 	/*this.gotGpsData({
@@ -346,18 +354,24 @@ AddstopAssistant.prototype.onNearbyStopsButtonTap = function()
 AddstopAssistant.prototype.gotGpsData = function(gpsData){
 	Mojo.Log.info("********* Got GPS Data: " + gpsData.latitude +','+ gpsData.longitude);
 
+	$("nearby-stops-button").mojo.deactivate();
+	this.hideGettingGPSMessage();
 	this.getStopSearchData(gpsData.latitude, gpsData.longitude);
 }
 
 AddstopAssistant.prototype.gpsFailure = function(error){
 	Mojo.Log.error("********* GPS Failure: ", error.errorCode);
+	$("nearby-stops-button").mojo.activate();
+	this.hideGettingGPSMessage();
 	Trimet.showError(this, "GPS Error: " + GPS.getError(error.errorCode));
 }
 
 
 
-AddstopAssistant.prototype.getStopSearchData = function(lon, lat){
+AddstopAssistant.prototype.getStopSearchData = function(lat, lon){
 	var url = Trimet.baseStopsUrl + lon + ',' + lat;
+	
+	this.searchLatLon = new LatLon(lat, lon);
 	
 	if (Mojo.Host.current === Mojo.Host.mojoHost) {
 		var url = '/proxy?url=' + encodeURIComponent(url);
@@ -384,7 +398,7 @@ AddstopAssistant.prototype.gotStopSearchData = function(transport) {
 	
 	this.xmlStopSearchData = Trimet.getXML(transport);
 	
-	this.stopSearch = new StopSearch(this.xmlStopSearchData);
+	this.stopSearch = new StopSearch(this.xmlStopSearchData, this.searchLatLon);
 	Mojo.Log.info("********* Got Stop Search Data");
 	// deactivate the spinner
 	this.stopSpinner();
@@ -420,6 +434,14 @@ AddstopAssistant.prototype.updateStopSearchList = function(){
 		this.hideNoNearbyStopsMessage();
 	}
 
+}
+
+AddstopAssistant.prototype.showGettingGPSMessage = function(){
+	$("getting-gps-message").show();
+}
+
+AddstopAssistant.prototype.hideGettingGPSMessage = function(){
+	$("getting-gps-message").hide();
 }
 
 AddstopAssistant.prototype.showNoNearbyStopsMessage = function(){

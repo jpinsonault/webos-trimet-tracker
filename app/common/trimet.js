@@ -67,6 +67,18 @@ Trimet.Timers.updateTime = 5000;
 
  // Trimet.Utility
 ////////////////////////////////
+Trimet.Utility.openURL = function(scene, url){
+	scene.controller.serviceRequest("palm://com.palm.applicationManager", {
+		method: "open",
+		parameters:  {
+			id: 'com.palm.app.browser',
+			params: {
+				target: url
+			}
+		}
+	});
+}
+
 Trimet.Utility.clearList = function(list){
 	if(list.length > 0){
 		list.splice(0,list.length);	
